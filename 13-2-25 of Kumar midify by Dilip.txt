@@ -1,0 +1,241 @@
+Freestyle Job
+-----------------
+A Freestyle Job is a simple, GUI-based job configuration in Jenkins. It is suitable for basic build automation, compiling code, running tests, and deploying applications.
+
+- Graphical UI-based Configuration (No coding required)
+
+
+Pipeline Job
+----------------
+A Pipeline Job is a script-based job using Groovy DSL. It allows defining complex build workflows with multiple stages.
+
+Uses Code (Jenkinsfile) for Automation (More flexible).
+Supports Multi-Stage Builds (e.g., Build → Test → Deploy).
+Version Controlled (Stored in SCM like Git).
+
+
+============================
+
+
+Types of Jenkins Pipelines
+
+1: Declarative Pipeline
+2: Scripted Pipeline
+
+
+Both uses : Groovy-based syntax
+
+
+1. Declarative Pipeline (Recommended) ----------> You should start from here
+
+A structured and easier-to-read Jenkins pipeline syntax. It follows a fixed structure with pre-defined sections like pipeline, agent, stages, and steps.
+
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                echo "Building Project"
+                sh 'mvn clean package'
+            }
+        }
+        stage('Test') {
+            steps {
+                echo "Running Tests"
+                sh 'mvn test'
+            }
+        }
+        stage('Deploy') {
+            steps {
+                echo "Deploying Application"
+                sh 'scp target/*.war user@server:/deploy/'
+            }
+        }
+    }
+}
+
+
+2. Scripted Pipeline (Advanced)
+A more flexible and fully Groovy-based pipeline that allows advanced scripting and dynamic workflows.
+
+
+node {
+    stage('Build') {
+        echo "Building the application"
+        sh 'mvn clean package'
+    }
+    stage('Test') {
+        echo "Running unit tests"
+        sh 'mvn test'
+    }
+    stage('Deploy') {
+        echo "Deploying application"
+        sh 'scp target/*.war user@server:/deploy/'
+    }
+}
+
+
+=============================================================================
+
+
+SCM: https://github.com/discover-devops/JenkinsDemo.git
+
+
+>>>>>>>>>>>>>>>>>>>>>>>>
+app.py
+
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Hello, World! This is my Jenkins CI/CD pipeline demo."
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+
+<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
+FROM python:3.9-slim
+
+WORKDIR /app
+COPY . /app
+
+RUN pip install --no-cache-dir -r requirements.txt
+
+EXPOSE 5000
+CMD ["python", "app.py"]
+
+>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+
+Jenkinsfile
+
+pipeline {
+    agent {
+        label 'WorkerNode'  // Replace with your worker node's label
+    }
+    
+    environment {
+        DOCKER_IMAGE = 'discoverdevops/my-app:latest'
+        GIT_REPO = 'https://github.com/discover-devops/JenkinsDemo.git'
+    }
+
+    stages {
+        stage('Clone Source Code') {
+            steps {
+                git branch: 'main', url: "${GIT_REPO}"
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    def appImage = docker.build(DOCKER_IMAGE)
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    docker.withRegistry('', 'dockerhub-credentials') {
+                        docker.image(DOCKER_IMAGE).push()
+                    }
+                }
+            }
+        }
+
+        stage('Deploy Application') {
+            steps {
+                script {
+                    sh """
+                    docker stop my-app || true
+                    docker rm my-app || true
+                    docker run -d --name my-app -p 5000:5000 ${DOCKER_IMAGE}
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Cleaning up workspace...'
+            cleanWs()
+        }
+    }
+}
+
+=====================================================================================
+
+
+
+pipeline {
+    // Specify the agent (worker node) where the job should run
+    agent { label 'WorkerNode' }
+
+    environment {
+        REPO_URL = 'https://github.com/discover-devops/JenkinsDemo.git'  // Your GitHub repository URL
+        DOCKER_IMAGE = 'discoverdevops/my-custom-tomcat:latest'          // Docker image name
+        APP_FOLDER = 'my_tomcat_app'                                     // Folder containing the Dockerfile and application files
+    }
+
+    stages {
+        stage('Checkout Source Code') {
+            steps {
+                echo 'Checking out source code from repository...'
+                git branch: 'main', url: "${REPO_URL}"
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image on WorkerNode...'
+                script {
+                    // Build the Docker image using the Dockerfile in the APP_FOLDER
+                    docker.build("${DOCKER_IMAGE}", "./${APP_FOLDER}")
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                echo 'Pushing Docker image to DockerHub...'
+                script {
+                    docker.withRegistry('', 'dockerhub-credentials') {
+                        docker.image(DOCKER_IMAGE).push()
+                    }
+                }
+            }
+        }
+
+        stage('Deploy Application') {
+            steps {
+                echo 'Deploying application on WorkerNode...'
+                script {
+                    sh """
+                    docker stop my-custom-tomcat || true
+                    docker rm my-custom-tomcat || true
+                    docker run -d --name my-custom-tomcat -p 8080:8080 ${DOCKER_IMAGE}
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline executed successfully on WorkerNode!'
+        }
+
+        failure {
+            echo 'Pipeline execution failed!'
+        }
+
+        always {
+            echo 'Cleaning up workspace...'
+            cleanWs()
+        }
+    }
+}
