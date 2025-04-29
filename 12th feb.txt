@@ -1,0 +1,301 @@
+firstly download "build pipelie" 
+In Dashboard
+go to Manage Jenkins
+then click Plugins
+then click Available Plugins
+In searchbar search Build Pipeline , Select it and then click install 
+
+Next go to 
+Dashboard click on +(New View) icon which is right to the All 
+in  New view
+Name: MyPipeline_view
+Type select Build Pipeline View
+click create.
+
+Edit View
+Name: MyPipeline_view
+Description: MyPipeline_view
+Build Pipeline View Title:MyPipeline
+click save
+
+let'see your pipeline
+
+
+------------------------------------------------------- (If you want to access your slave instance in your master instance so the below
+steps will used)
+
+
+Go to your instance 
+sudo su -
+PS1="Master $ "
+ssh 172.31.29.130  Private key 
+yes
+
+exit
+
+id
+ssh-keygen -t rsa
+enter 
+enter
+enter
+cd /home/ubuntu/.ssh
+ls
+
+
+make an new  instance  Install java, edit inbounded rule
+java version must be show 
+
+pwd
+cd .ssh
+pwd
+ls
+vi authorized_keys
+
+go to your older instance and type 
+cat id_rsa.pub  (copy all the data from ssh to ubuntu@)
+and paste at new instance authorized_keys file 
+
+then save this file
+
+
+now in your older instance type ssh 172.31.18.103 ( this is your new instance's private key)
+
+------------------------------------------------------------------------------------------------------Skip the below steps
+Go to the jenkins
+
+Dashboard
+Manage Jankins
+Nodes
+New Node
+Node Name: Myslave_A
+type select permanent agent 
+click on create
+
+Description
+Myslave_A
+Remote root directory
+/tmp
+Labels
+SlaveA
+Launch method
+Launch agents via SSH
+
+go to jenkins older instance 
+sudo su -
+cd /var/lib/jenkins/workspace
+ls
+     "to check where is my projects"
+
+
+Copy the New instance private key and paste them into the 
+Host section
+credential
+click add]
+click jenkins
+
+Username:jenkins
+Password:sonakshi@3005
+
+click add
+
+In credentials the jenkins/**** shown, must be.
+Host Key Verification Strategy
+?
+
+Manually trusted key varification strategy select
+
+
+click on save
+------------------------------------------------------------------------------till yet !!!!!!
+
+
+
+The making of slave job and connect to your slave instance are given in the one-on-one session video ......
+Steps are given below to connect your slave to your jobs
+
+slave instance 
+
+sudo apt update
+sudo apt install openjdk-17-jre -y
+java --version
+
+>desboard 
+>Nodes
+
+click on new nodes 
+
+Node name :- slave1
+chack the type Permanenet agent and click create 
+Remote root Directory? /home/ubuntu/jenkins/
+Lauch method ? Luanch agent via SSh
+Host is your private Ip of slave instance
+credentials click add click jenkins 
+Kind SSH Username with private key 
+Username Ubuntu
+private key select Enter directory  click Add > Copy your slave's instance pem key's data and paste them into the key section of enter directory.
+then click add 
+again click on credentials and select your credential 
+Host key Varification Strategy ? choose Non Verifying Verification Strategy
+click on Save
+
+Then connect this slave to your "Compile job".
+Select Restrict where this project can be run ?
+Label Expression: Writedown the node name then click save 
+
+pwd
+cd .ssh
+pwd
+ls
+cd /home/ubuntu/jenkins/workspace
+ls
+output 
+MyPackageJob_projectA  myComplilejob_projectA
+--------------------------------------------------------------------------------------------------
+
+make the new item or new job as the name is 12th_feb_package
+
+name : 12th_feb-package
+freestyle=>ok
+general 
+Description :This is the package job
+
+Source Code Management
+Repositories :https://github.com/discover-devops/JenkinsMaven.git
+Branches to build?
+Branch Specifier (blank for 'any')
+*/main
+
+
+Build Steps
+Automate your build process with ordered tasks like code compilation, testing, and deployment.
+Invoke top-level Maven targets
+?
+Maven Version
+mymvn
+Goals
+clean package
+Advanced
+POM
+java-tomcat-sample/pom.xml
+
+Post-build Actions
+Define what happens after a build completes, like sending notifications, archiving artifacts, or triggering other jobs.
+Archive the artifacts?
+
+Files to archive
+?
+**/*.war
+
+click save
+and click build now
+
+then go to your slave instance 
+and type 
+(cd /tmp
+cd /opt
+sudo su -) Skip this steps Go further()
+wget https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.102/bin/apache-tomcat-9.0.102.tar.gz
+tan xvfz apache-tomcat-9.0.102.tar.gz
+cd apache-tomcat-9.0.102/
+ls
+sudo nano conf/tomcat-users.xml
+
+after open the above file go to last and uncomment the last script by deleting the (-->)
+delete the 3rd and 4th line of uncommented script
+first line rolename :- "manager-gui"/>
+second line rolename :- "manager-script"/>
+Third line  username:-"tomcat password:- "tomcat" roles:- "manager-gui, manager-script"/>
+save that 
+sudo nano webapps/manager/META-INF/context.xml
+after it opened detele the Allow all text which is in this "" and ".*"/>
+cd bin/
+./shutdown.sh
+./startup.sh
+
+copy the public id of your instance and http://<your-server-ip>:8080 (paste with replace this <your-server-ip>) in your browser 
+sign in 
+username tomacat 
+password tomcat
+click sign in
+
+go to jenkins
+
+make new job or item
+New Item
+Enter an item name
+12thfeb_deploy_job
+freestyle=>ok
+
+General
+
+Description
+This is my deployment job
+Dashboard
+Manage Jenkins
+Plugins
+
+Available Plugins
+Search 	
+1.Copy Artifact select it 
+2. deploy to container
+click install it 
+
+go to your 12thfeb_deploy_job
+Build Steps
+Automate your build process with ordered tasks like code compilation, testing, and deployment.
+Copy artifacts from another project
+Project name=>12th_feb_package_job
+tick on STable build only
+Artifacts to copy
+**/*.war
+
+Post-build Actions
+Define what happens after a build completes, like sending notifications, archiving artifacts, or triggering other jobs.
+Deploy war/ear to a container
+
+WAR/EAR files
+**/*.war
+
+Context path
+/
+
+Containers
+Tomcat 9.x Remote
+Credentials
+add=>jenkins
+ in username =>tomcat
+password=>tomcat
+id new 
+click add
+in credentials Choose tomcat 
+
+Tomcat URL
+http://34.230.17.158:8080/
+
+click save
+
+http://34.230.17.158:8080/ copy and paste that url to your search bar and will show you app interface
+
+
+
+
+
+
+(all task perform in root user
+check the tomcat9 
+cd /usr/local/tomcat9/
+ls) skip this all in bracket
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
