@@ -1,0 +1,95 @@
+23/01/25 Docker and kubernates commands 
+
+(github.com --> discover-devops --> repository --> my-docker )
+
+1.sudo -su 
+2. PS1="Slave $ "
+
+ docker
+apt install docker.io
+y
+ sudo apt-get update
+or 
+if needed
+apt install docker.io
+
+docker
+
+docker ps (2nd screen first bali)
+sudo su -    "
+PS1="Slave $ "
+sudo ps -a
+ip addr show
+
+3. docker --version
+ip addr show
+
+4. docker inspect docker0        (eth0   172.31.43.94/20)    (Slave  172.31.27.194/20)
+5. docker network ls
+6. docker inspect bridge
+7. docker ps
+8. docker ps -a
+9. docker images
+10. docker network ls
+11. ip addr show
+12.docker inspect bridge
+13. docker run -dit --name ConA alpine ash
+doker ps
+14. docker run -dit --name ConB  alpine ash
+docker ps
+ip addr show
+15. docker attach ConA
+16. PS1="ConA $" 
+17. PS1="ConB $ "
+18. ping google.com
+19. docker system prune         -----docker ps -a
+20. docker system prune --all     ---- docker images
+21. docker stop ConB ConA      (ETHO SCREEN)
+22. docker swarm init --advertise-addr 172.31.43.94     (docker swarm join --token SWMTKN-1-4abb6w1jcfrecui7mt3wbuitln5wdxtyzcmcozqj4mids8m5zi-36tzxlky18kq17xi05kst6ycm 172.31.43.94:2377)
+23. docker node ls
+24. docker network ls ( ip addr show )
+25. docker network create --driver overlay my-overlay-network
+26. docker network ls
+27. docker service create --name my-nginx --replicas 2 --network my-overlay-network nginx
+28. docker service ps my-nginx
+29. docker swarm join-token worker
+
+
+docker swarm join --token SWMTKN-1-4abb6w1jcfrecui7mt3wbuitln5wdxtyzcmcozqj4mids8m5zi-36tzxlky18kq17xi05kst6ycm 172.31.43.94:2377
+docker  ps (on master)
+docker exec -it 8eef50e2f1ed  bash
+
+docker ps (on slave )
+docker exec -it 1a6f20716209 bash
+ip addr show 
+show (command not found)
+30. CA 8eef50e2f1ed
+31. CB 1a6f20716209
+32. exit, slave par bhi exit 
+33. docker service ps alpine-service (again use docker ps) [ on slave (ctrl+c)]
+34. docker exec -it 676678d38afc sh 
+35. (on slave) docker exec -it d632ac39bff3 sh      
+36. (on main) ip addr show (inet 10.0.1.8/24 )
+37. (on slave) ip addr show (inet 10.0.1.9/24)
+38. 
+39. 
+40. 
+41. 
+42. 
+43.
+44. 
+45. 
+46. 
+47. 
+48. 
+49. 
+50. 
+51. 
+52. 
+53. 
+54. 
+55. 
+
+ 
+     
+
