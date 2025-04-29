@@ -1,0 +1,354 @@
+
+creat an instance with t2.medium and aws amazon linux os system.
+
+curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
+chmod +x ./kubectl
+sudo mv ./kubectl /usr/local/bin
+kubectl version --short --client
+
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
+eksctl version
+
+
+aws linux skip that 
+(curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.10/2020-02-22/bin/linux/amd64/aws-iam-authenticator
+chmod +x ./aws-iam-authenticator
+sudo mv ./aws-iam-authenticator /usr/local/bin
+aws-iam-authenticator help
+aws-iam-authenticator version)
+
+Create IAM Role:
+
+Create an IAM role and attach it to the EC2 instance.
+The IAM user should have programmatic access and permissions for IAM, EC2, and CloudFormation.
+Check eksctl documentation for minimum IAM policies.
+
+eksctl create cluster --name my-cluster4 \
+   --region ap-south-1 \
+   --node-type t2.medium
+
+kubectl get nodes
+
+
+
+nano namespace.yaml
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: efklog
+
+
+
+
+nano kibana-deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana-logging
+  namespace: efklog
+  labels:
+    k8s-app: kibana-logging
+    addonmanager.kubernetes.io/mode: Reconcile
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      k8s-app: kibana-logging
+  template:
+    metadata:
+      labels:
+        k8s-app: kibana-logging
+      annotations:
+        seccomp.security.alpha.kubernetes.io/pod: 'docker/default'
+    spec:
+      containers:
+      - name: kibana-logging
+        image: docker.elastic.co/kibana/kibana-oss:7.3.2
+        resources:
+          limits:
+            cpu: 1000m
+          requests:
+            cpu: 100m
+        env:
+          - name: ELASTICSEARCH_HOSTS
+            value: http://elasticsearch-logging:9200
+          - name: SERVER_NAME
+            value: kibana-logging
+          - name: SERVER_REWRITEBASEPATH
+            value: "false"
+        ports:
+        - containerPort: 5601
+          name: ui
+          protocol: TCP
+
+nano kibana-service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana-logging
+  namespace: efklog
+  labels:
+    k8s-app: kibana-logging
+    kubernetes.io/cluster-service: "true"
+    addonmanager.kubernetes.io/mode: Reconcile
+    kubernetes.io/name: "Kibana"
+spec:
+  ports:
+  - port: 5601
+    protocol: TCP
+    targetPort: ui
+  selector:
+    k8s-app: kibana-logging
+  type: LoadBalancer
+
+nano es-statefulset.yaml
+
+# RBAC for Elasticsearch
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: elasticsearch-logging
+  namespace: efklog
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: elasticsearch-logging
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - "services"
+  - "namespaces"
+  - "endpoints"
+  verbs:
+  - "get"
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  namespace: efklog
+  name: elasticsearch-logging
+subjects:
+- kind: ServiceAccount
+  name: elasticsearch-logging
+  namespace: efklog
+roleRef:
+  kind: ClusterRole
+  name: elasticsearch-logging
+  apiGroup: ""
+---
+# Elasticsearch StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: elasticsearch-logging
+  namespace: efklog
+spec:
+  serviceName: elasticsearch-logging
+  replicas: 2
+  selector:
+    matchLabels:
+      k8s-app: elasticsearch-logging
+      version: v7.3.2
+  template:
+    metadata:
+      labels:
+        k8s-app: elasticsearch-logging
+        version: v7.3.2
+    spec:
+      serviceAccountName: elasticsearch-logging
+      containers:
+      - image: quay.io/fluentd_elasticsearch/elasticsearch:v7.3.2
+        name: elasticsearch-logging
+        resources:
+          limits:
+            cpu: 500m
+            memory: 3Gi
+          requests:
+            cpu: 100m
+            memory: 1Gi
+        ports:
+        - containerPort: 9200
+          name: db
+        - containerPort: 9300
+          name: transport
+        volumeMounts:
+        - name: elasticsearch-logging
+          mountPath: /data
+        env:
+        - name: "NAMESPACE"
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+      volumes:
+      - name: elasticsearch-logging
+        emptyDir: {}
+      initContainers:
+      - image: alpine:3.6
+        command: ["/sbin/sysctl", "-w", "vm.max_map_count=262144"]
+        name: elasticsearch-logging-init
+        securityContext:
+          privileged: true
+
+nano es-service.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch-logging
+  namespace: efklog
+spec:
+  ports:
+  - port: 9200
+    protocol: TCP
+    targetPort: db
+  selector:
+    k8s-app: elasticsearch-logging
+
+nano fluentd-es-configmap.yaml
+
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: fluentd-es-config-v0.2.0
+  namespace: efklog
+data:
+  system.conf: |-
+    <system>
+      root_dir /tmp/fluentd-buffers/
+    </system>
+  
+  containers.input.conf: |- 
+    (बहुत लंबा है -- इसमें Fluentd का container logs collect करने का configuration है)
+
+  system.input.conf: |- 
+    (Fluentd system level logs parsing config)
+
+  forward.input.conf: |- 
+    (TCP input config for Fluentd)
+
+  monitoring.conf: |- 
+    (Prometheus monitoring config for Fluentd)
+
+  output.conf: |- 
+    (Elasticsearch output config for Fluentd)
+
+nano fluentd-es-ds.yaml
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fluentd-es
+  namespace: efklog
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: fluentd-es
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - "namespaces"
+  - "pods"
+  verbs:
+  - "get"
+  - "watch"
+  - "list"
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: fluentd-es
+subjects:
+- kind: ServiceAccount
+  name: fluentd-es
+  namespace: efklog
+roleRef:
+  kind: ClusterRole
+  name: fluentd-es
+  apiGroup: ""
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fluentd-es-v2.7.0
+  namespace: efklog
+spec:
+  selector:
+    matchLabels:
+      k8s-app: fluentd-es
+      version: v2.7.0
+  template:
+    metadata:
+      labels:
+        k8s-app: fluentd-es
+        version: v2.7.0
+    spec:
+      serviceAccountName: fluentd-es
+      containers:
+      - name: fluentd-es
+        image: quay.io/fluentd_elasticsearch/fluentd:v2.7.0
+        env:
+        - name: FLUENTD_ARGS
+          value: --no-supervisor -q
+        resources:
+          limits:
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+        volumeMounts:
+        - name: varlog
+          mountPath: /var/log
+        - name: varlibdockercontainers
+          mountPath: /var/lib/docker/containers
+          readOnly: true
+        - name: config-volume
+          mountPath: /etc/fluent/config.d
+      volumes:
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: varlibdockercontainers
+        hostPath:
+          path: /var/lib/docker/containers
+      - name: config-volume
+        configMap:
+          name: fluentd-es-config-v0.2.0
+
+skip that steps 
+(kubectl apply -f namespace.yaml  # अगर namespace बना नहीं है
+kubectl apply -f es-service.yaml
+kubectl apply -f es-statefulset.yaml
+kubectl apply -f fluentd-es-configmap.yaml
+kubectl apply -f fluentd-es-ds.yaml
+kubectl apply -f kibana-deployment.yaml
+kubectl apply -f kibana-service.yaml)
+
+ll
+kubectl  create ns efklog
+ls
+kubectl get ns
+kubectl  apply -f .
+kubectl get all -n efklog
+kubectl get pod -n efklog
+kubectl get pod -n efklog
+kubectl get pod -n efklog
+kubectl get all -n efklog
+
+Go to your instance window find the load balancing section which is 
+placed on the left hand section down side. click on Load Balancers.
+your id will showing checked box and in details scroll down and 
+copy the DNS name and paste on the browser after pasting in the last you need to write 
+this :5601
+
+Example>> http://a3143199b216e43d39444e4c0ce4a26a-1928432908.ap-south-1.elb.amazonaws.com:5601
+your kibana dashbord showing click on explore after that detele the cluster 
+
+eksctl delete cluster my-cluster4 --region ap-south-1
