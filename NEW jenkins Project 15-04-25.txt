@@ -1,0 +1,26 @@
+ubuntu@ip-172-31-13-101:~$ git clone https://github.com/dkai89/login-app.git
+cd login-app
+Cloning into 'login-app'...
+remote: Enumerating objects: 26, done.
+remote: Counting objects: 100% (26/26), done.
+remote: Compressing objects: 100% (25/25), done.
+remote: Total 26 (delta 11), reused 0 (delta 0), pack-reused 0 (from 0)
+Receiving objects: 100% (26/26), 8.70 KiB | 1.74 MiB/s, done.
+Resolving deltas: 100% (11/11), done.
+ubuntu@ip-172-31-13-101:~/login-app$ docker run -d -p 3000:3000 dilipdevops1982/login-app
+Unable to find image 'dilipdevops1982/login-app:latest' locally
+latest: Pulling from dilipdevops1982/login-app
+f18232174bc9: Already exists 
+dd71dde834b5: Already exists 
+1e5a4c89cee5: Already exists 
+25ff2da83641: Already exists 
+22f0460e3dd3: Pull complete 
+ffc5b010e147: Pull complete 
+0125eea0e6a5: Pull complete 
+Digest: sha256:2f9dee6eabcec6532b0059fd9f3b0772a694cde1481c6c0bdf9b1d04979c46f9
+Status: Downloaded newer image for dilipdevops1982/login-app:latest
+b62278d836d7d20b555263a30c9fdc05ed0af8ed854f5824a368579e327a7287
+ubuntu@ip-172-31-13-101:~/login-app$ docker ps 
+CONTAINER ID   IMAGE                       COMMAND                  CREATED         STATUS         PORTS                                       NAMES
+b62278d836d7   dilipdevops1982/login-app   "docker-entrypoint.s…"   2 minutes ago   Up 2 minutes   0.0.0.0:3000->3000/tcp, :::3000->3000/tcp   festive_lewin
+ubuntu@ip-172-31-13-101:~/login-app$ 
