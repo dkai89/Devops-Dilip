@@ -1,0 +1,271 @@
+ firstly create three instances and connect them.
+1. ansible 
+2. webservers
+3. dbservers
+after create all three instances then follow below steps
+sudo yum update -y
+sudo amazon-linux-extras enable epel
+sudo yum install
+sudo dnf update -y
+sudo dnf install python3 python3-pip -y
+pip3 install --user ansible
+ansible --version
+ssh-keygen
+enter
+enter
+enter
+ssh-copy-id ec2-user@52.53.154.214
+yes
+ssh-copy-id ec2-user@13.57.222.126
+yes
+ssh ec2-user@52.53.154.214  # DB Server
+cat ~/.ssh/id_rsa.pub
+ssh ec2-user@52.53.154.214
+exit
+ssh ec2-user@13.57.222.126  # Web Server's Public IP
+exit
+sudo nano /etc/ansible/hosts
+inventory file opens when it opens copy the below containt and 
+paste into the file.
+[webservers]
+13.235.2.222  # Web server public IP update according to yours
+
+[dbservers]
+52.66.201.237   # DB server public IP update according to yours
+
+ansible webservers -m ping
+ansible dbservers -m ping
+id
+python3 -c 'import crypt; print(crypt.crypt("password123", crypt.mksalt(crypt.METHOD_SHA512)))'
+copy the output and below 
+ansible webservers -m user -a "name=dhanraj password='$6$bcABo8PGiSPWGntm$Qd7CjmcLio.RsRJ.bivuUqy6eYUFltBs9hiZe9cckrotCl2synlUTX9540jmr6DntSSZ3Jtv3N/.NoCbHI78o1'" --become
+ansible webservers -m user -a "name=dhanraj password='$6$bcABo8PGiSPWGntm$Qd7CjmcLio.RsRJ.bivuUqy6eYUFltBs9hiZe9cckrotCl2synlUTX9540jmr6DntSSZ3Jtv3N/.NoCbHI78o1'" --become
+ansible dbservers -m user -a "name=dhanraj password='$6$bcABo8PGiSPWGntm$Qd7CjmcLio.RsRJ.bivuUqy6eYUFltBs9hiZe9cckrotCl2synlUTX9540jmr6DntSSZ3Jtv3N/.NoCbHI78o1'" --become
+ansible dbservers -m user -a "name=dhanraj password='$6$bcABo8PGiSPWGntm$Qd7CjmcLio.RsRJ.bivuUqy6eYUFltBs9hiZe9cckrotCl2synlUTX9540jmr6DntSSZ3Jtv3N/.NoCbHI78o1'" --become
+
+go to webservers instance the type
+id dhanraj # It will show you (uid=1001(dhanraj) gid=1001(dhanraj) groups=1001(dhanraj)) this type of output.
+go to dbservers instance the type
+id dhanraj # It will show you (uid=1001(dhanraj) gid=1001(dhanraj) groups=1001(dhanraj)) this type of output.
+
+pwd
+mkdir my_playbook (this folder in your defualt location(/home/ec2-user))
+cd mkdir my_playbook
+nano nginx_create.yaml
+
+- name: Deploy custom HTML page with Nginx using Ansible
+  hosts: webservers
+  become: true
+
+  tasks:
+    - name: Install Nginx
+       yum:
+        name: nginx
+        state: present
+
+    - name: Ensure Nginx is running
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Deploy custom HTML webpage
+      copy:
+        content: |
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>Welcome to My Ansible Deployed Nginx</title>
+              <style>
+                  body {
+                      font-family: Arial, sans-serif;
+                      text-align: center;
+                      margin-top: 50px;
+                  }
+                  h1 {
+                      color: blue;
+                  }
+              </style>
+          </head>
+          <body>
+              <h1>Welcome to My Website!</h1>
+              <p>This webpage was deployed using Ansible.</p>
+          </body>
+          </html>
+        dest: /usr/share/nginx/html/index.html
+        owner: nginx
+        group: nginx
+        mode: '0644'
+
+    - name: Restart Nginx to apply changes
+      service:
+        name: nginx
+        state: restarted
+
+nano inventory
+
+[webservers]
+13.235.2.222  # Web server public IP update according to yours
+
+[dbservers]
+52.66.201.237   # DB server public IP update according to yours
+
+ansible-playbook nginx_create.yaml
+
+
+now go to your webservers instance and type the below command
+systemctl status nginx
+now, go to your browser and type the below command
+http://13.235.2.222/   http://52.66.201.237/ this your intance's public key replace with yours.
+
+go to you ansible instance and update the file 
+pwd
+cd mkdir my_playbook
+go to you ansible instance and update the file 
+nano nginx_create.yaml
+host = dbservers 
+save it then execute below commnad 
+
+ansible-playbook nginx_create.yaml
+yes
+now go to your dbservers instance and type the below command
+systemctl status nginx
+now, go to your browser and type the below command
+http://52.66.201.237/ 
+
+
+nano uninstall_nginx.yaml
+
+- name: Uninstall Nginx and Clean Up Configuration (Amazon Linux)
+  hosts: dbservers
+  become: true
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+  tasks:
+    - name: Stop Nginx service
+      service:
+        name: nginx
+        state: stopped
+      ignore_errors: yes
+
+    - name: Disable Nginx service from starting on boot
+      service:
+        name: nginx
+        enabled: no
+      ignore_errors: yes
+
+    - name: Uninstall Nginx package
+      yum:
+        name: nginx
+        state: absent
+
+    - name: Remove Nginx configuration directory
+      file:
+        path: /etc/nginx
+        state: absent
+      ignore_errors: yes
+
+    - name: Remove web content directory
+      file:
+        path: /usr/share/nginx/html
+        state: absent
+      ignore_errors: yes
+
+    # - name: Install firewalld if needed
+    #   yum:
+    #     name: firewalld
+    #     state: present
+    #   become: true
+
+    # - name: Disable firewalld HTTP rule (if configured previously)
+    #   shell: firewall-cmd --permanent --remove-service=http
+    #   ignore_errors: yes
+
+    # - name: Disable firewalld HTTPS rule (if configured previously)
+    #   shell: firewall-cmd --permanent --remove-service=https
+    #   ignore_errors: yes
+
+    # - name: Reload firewalld to apply changes
+    #   shell: firewall-cmd --reload
+    #   ignore_errors: yes
+
+ansible-playbook uninstall_nginx.yaml
+
+go to your dbservers instance and execute this 
+systemctl status nginx
+the output are like the below.
+(Unit ngnix.service could not be found.) this means nginx successfully uninstalled 
+
+go to you ansible instance and update the file 
+
+nano uninstall_nginx.yaml
+host = webservers
+save it then execute below commnad 
+ansible-playbook uninstall_ngnix.yaml
+
+go to your webservers instance and execute this 
+systemctl status ngnix
+the output are like the below.
+(Unit ngnix.service could not be found.) this means nginx successfully uninstalled 
+
+( this commands use to install nginx for webservers) 
+
+ - name: Deploy custom HTML page with Nginx using Ansible
+  hosts: dbservers
+  become: true
+
+  tasks:
+    - name: Install Nginx
+      yum:
+        name: nginx
+        state: present
+
+    - name: Ensure Nginx is running
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Deploy custom HTML webpage
+      copy:
+        content: |
+          <!DOCTYPE html>
+          <html>
+          <head>
+              <title>Welcome to My Ansible Deployed Nginx</title>
+              <style>
+                  body {
+                      font-family: Arial, sans-serif;
+                      text-align: center;
+                      margin-top: 50px;
+                  }
+                  h1 {
+                      color: blue;
+                  }
+              </style>
+          </head>
+          <body>
+              <h1>Welcome to My Website!</h1>
+              <p>This webpage was deployed using Ansible.</p>
+          </body>
+          </html>
+        dest: /usr/share/nginx/html/index.html
+        owner: nginx
+        group: nginx
+        mode: '0644'
+
+    - name: Restart Nginx to apply changes
+      service:
+        name: nginx
+        state: restarted
+
+
+
+
+
+
+
+
+
+
