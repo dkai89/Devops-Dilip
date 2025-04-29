@@ -1,0 +1,238 @@
+[to login jenkins: admin
+Password : Sonakshi@3005 ]
+ 
+firstly we find out the java path  
+
+
+
+java --version
+cd /usr/lib
+cd jvm
+ls
+echo $PATH
+export JAVA_HOME=/usr/lib/jvm/java-1.17.0-openjdk-amd64
+echo $JAVA_HOME
+Copy the output of which you get from above command
+
+
+varify git 
+git
+
+go to your jenkins portal for further working
+****Login to your jenkins account**
+
+To Create Tool follow the below command
+in Dashboard
+click Manage Jenkins
+then click Tools
+
+JDK installations
+Name : java
+JAVA_HOME: /usr/lib/jvm/java-1.17.0-openjdk-amd64
+
+Maven installations
+Name: mymvn
+
+
+click save
+
+go to black screen and type mvn --version to check whether meven installed or not If not then type 
+sudo apt install maven
+type y ( in during process they ask you type y)
+then check  mvn --version
+
+this output will show
+Apache Maven 3.8.7
+Maven home: /usr/share/maven
+Java version: 17.0.14, vendor: Ubuntu, runtime: /usr/lib/jvm/java-17-openjdk-amd64
+Default locale: en, platform encoding: UTF-8
+OS name: "linux", version: "6.8.0-1025-aws", arch: "amd64", family: "unix"
+
+if it show then it implies that your meven install successfully completed
+
+
+----------------------------- 1.0
+Dashboard
+
+click New Item
+Enter an item name: myCompilejob_projectA
+Select an item type: freestyle project
+click ok
+
+
+General
+
+Description
+this is my Compile Job
+
+click on GitHub project
+Project url
+https://github.com/vaadin/addressbook.git
+
+source code management
+choose git ?
+paste the repositories url
+https://github.com/vaadin/addressbook.git
+
+Build Steps
+choose 
+Invoke top-level Maven targets
+
+Maven Version
+mymvn
+
+Goals
+compile
+
+click on save
+
+after then click on "build now".
+
+---------------------------------------------------------------- 2.o
+
+Make Mytestjob 
+
+Dashboard
+
+click New Item
+Enter an item name: Mytestjob
+Select an item type: freestyle project
+click ok
+
+
+lick on GitHub project
+Project url
+https://github.com/vaadin/addressbook.git
+
+source code management
+choose git ?
+paste the repositories url
+https://github.com/vaadin/addressbook.git
+
+
+Build Steps
+choose 
+Invoke top-level Maven targets
+
+Maven Version
+mymvn
+
+Goals
+test
+
+click on save
+
+after then click on "build now".
+
+----------------------------------------------------------------3.o
+
+Make MyPackageJob_projectA
+
+Dashboard
+
+click New Item
+Enter an item name: MyPackageJob_projectA
+Select an item type: freestyle project
+click ok
+
+
+lick on GitHub project
+Project url
+https://github.com/vaadin/addressbook.git
+
+source code management
+choose git ?
+paste the repositories url
+https://github.com/vaadin/addressbook.git
+
+
+Build Steps
+choose 
+Invoke top-level Maven targets
+
+Maven Version
+mymvn
+
+Goals
+package
+
+click on save 
+
+after then click on "build now".
+-------------------------------------------------------------------4.0 [ start games]
+click on  myCompilejob_projectA file. which is shown on dashboard
+click on Configure 
+Go to Triggers section and apply some changes
+
+Discuss about Triggers
+
+##Build periodically ?  every mint it will automatically execute
+Schedule? 
+* * * * *
+
+click save 
+
+
+######Poll SCM ?  If any new commit then it will execute the file automatically, If not there will be no execution of file;.
+
+Schedule ?
+* * * * *
+
+click save 
+
+-----------------------------
+
+###GitHub hook trigger for GITScm polling ? 
+just click on it and save 
+
+When enabled, GitHub notifies your CI/CD server immediately when new commits are pushed.
+
+More efficient than polling because it doesn’t check Git manually—instead, it listens for events.
+
+Requires GitHub Webhooks to be set up.
+-------------------------------------------------------
+
+Build after other projects are built ?
+
+---------------------------------------------  [game here]
+
+
+
+
+I used ##Build periodically ?  method to check whether my pipeline works or not.
+
+click on myComplilejob_projectA
+
+go to configure
+choose the option in Triggers "Build periodically"
+Schedule? 
+* * * * *
+click save 
+
+and just save it 
+
+
+click on Mytestjob
+
+go to configure
+choose this Build after other projects are built
+writedown the name of compile project
+and just save it 
+---------------------
+click on MyPackageJob_projectA
+go to configure
+choose this Build after other projects are built
+writedown the name of  mytestjob
+and just save it 
+
+
+Now all set check now
+
+
+In Triggers uncheck the option "Build periodically" and save it.
+When your working is off kindly change the setting warna it will continously work as you left.
+
+
+ 
+
+

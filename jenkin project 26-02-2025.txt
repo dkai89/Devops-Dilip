@@ -1,0 +1,102 @@
+Jenkin project (26-02-2025)
+
+on (1) EC2 jenkins-m  (2) EC2 jenkins-s1 (slave)
+
+both instances
+
+do
+
+sudo apt update
+
+now do on first ec2 instance
+sudo install openjdk-17-jdk
+and type y
+         or
+(this commands is workeble
+sudo apt update
+sudo apt install openjdk-17-jdk -y) from chat gpt
+
+java -version
+
+sudo nano a.sh
+
+sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+  https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt-get update
+sudo apt-get install jenkins
+
+a.ctrl + o
+b.entr
+c.ctrl + x ( all these abc commands we save and exit from nano editor)
+
+bash a.sh
+then type (y)
+
+
+2 EC2 JAVA INSTALL KAREIN
+
+sudo apt update
+sudo apt install openjdk-17-jdk -y
+
+FOR CONFIRM 
+java --version
+
+on frist 1 ec2
+jenkins --version
+
+now go to jenkins install -> linux -> Debian/Ubuntu->
+
+type on terminel this cammand and take password from given site of jenkins
+
+[sudo cat /var/lib/jenkins/secrets/initialAdminPassword]
+
+
+Unlock Jenkins
+To ensure Jenkins is securely set up by the administrator, a password has been written to the log (not sure where to find it?) and this file on the server:
+
+/var/lib/jenkins/secrets/initialAdminPassword
+
+Please copy the password from either location and paste it below.
+
+243e1fb7f90b4e7ea783693c5c0eaab0
+
+
+
+jenkin user id = dilipkumar
+pass word      = sona3005
+
+
+Slave1 server ki key pair
+
+
+-----BEGIN RSA PRIVATE KEY-----
+MIIEpQIBAAKCAQEA63FBYv97/WjguMYRh4pcdepss4crzzfOwvC4yqhY6iYJwJXr
+yNlRxm7OVPungLZ1MXXX9gtH7ABikLrag1K5ol+dhxzVkS2JmfHcUq/C0503QQ3H
+eT8B5QgWKsGDaxoR8DMSHq1VzuQPawAtsNdCTB4ExMpmd1cqw78ybrxfcaVJJADM
+FtRKbfhacQzRIAgNNX5ygs540dSmJa6NqSQsKeqqQU/0tC9MlIAxMHAv1yWiPtLP
+Tx7nGF65YD2hcls7zbLUggpk+e4CH1ejQqiOp1/1UoL+yOU1l7mxBEPXogt6nJyq
+Cv+FIC9qx9OL8QvFyiENVfQJBhKLYrFIn7L1LwIDAQABAoIBAEbMMKhPQP6Lmf+V
+99F1JqaCjptRizfthSwTbM3r34jRVV9m9ZbY2oE78qmVXuISe50a3YzsCX2LBBiX
+R3vz1URhUiI95m6Ybecv1lu65G/zt5jFRvVLoAs56kiDFjyPg1NiWBGHd+UVqRk4
+3YRuxk3TPQXcAwHh4UcpaEXqOR0XzfMuFx23EimmcqE6fL4be9Fz1Zl3iyBcIQN4
+lLPwbcIBaH4z6iknoCM6FsYvcvK1tOdsfAEbtliWeB2VdFQ6jJYcZrQEqXZ3Y2QP
+z8Pm9dQ150pi0xvAY5lff0BkQ7+jVyKFTCtF3tvZKrRD7L8B0LTTwa+9ASVfYzQi
+OuDtDtECgYEA/aL7S4eEjOF/DdSCC+E9V6TNFZxsLb25vfN5LUlFl8WgFqMmWsFp
+if7kHvL53J0Gz4bsUjk3e3Fr29yGM0j0PdWyAKzw2jYCwE6I8Uc5LkCqxexbBi25
+8KW5zV5v93TwRHM8OwEvl9iTumZsNAcW3LPfAckeNXM/ebJ6z8P+RikCgYEA7aLf
+q6oHtfP5ANsxW8uT7hmQL1oc3YhTeZa+6mPHH4MndRUpUudHYvb0wY3AnWz0uf8B
+FlMUOy5wpCyzNahy+LZMZP5g050Af4OGgqYyPBP9K8IMTu6muYKr33C6w3tb11+H
+FX0dGb/LTeU1SqbUFnQorm3e0TemzbqwuUZvW5cCgYEAwGdJgAM+buyESEaDnGVx
+9jFjDdjKS2yYIVs3+j2SGE7nYSTEbKY53F/KRxwEpPFNgFIWpU0YJIFm07MW7oKS
+HPIlhNOsJaxBLAanZXilDMwrf9cLOcWoPsBJEVxpTWuc9CACebQtmV/GuOkHffQ+
+yI9+RUl+rAdQCI53EXLZSfkCgYEApJoD2jFdQ/BpUumBR/c8UVmNoO8HPX/Xako7
+lbllTPOY2iW9SPqAXRF4ObWJbMHyxf7XbvI++jtRtLZtr8YtVQ9Y3T/CK/H9TVX6
+Tvb1pt2lqLCxu97cx3S2vn+kLhF9bTJzLDRMevB5z0vr3PivwZnWL/RUuZCVzrz4
++mzKZ6MCgYEApRU5vMQ4cQWPw4jSkLMbAm+1yIM5dBv5chOTucTZdsNTVGH7nwf6
+OKdbLvn0coGAEq/aBYxh2gAoCrrOTwmlAaGIuZYDcNgmdgc+2lzd60lwLazVNecO
+cu4Fptkal9awa9i29/KZCu0UQA8ZT2OCsVeMeXyuY2ssc9+Kx22rspI=
+-----END RSA PRIVATE KEY-----
+

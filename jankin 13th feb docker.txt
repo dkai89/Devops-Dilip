@@ -1,0 +1,149 @@
+create one repo on docker hub
+click create repo..
+name as you wish 
+click on click 
+
+
+click update your github jenkins repo
+commit those changes, docker name,github repo link, agent.
+
+1. Generate a New Docker Hub Access Token
+(This is better than using your actual password — safer and supported)
+
+Go to https://hub.docker.com/settings/security
+
+sudo apt update
+sudo apt install docker.io -y
+sudo systemctl enable docker
+sudo systemctl start docker
+docker --version
+sudo usermod -aG docker $USER
+sudo reboot
+docker ps
+docker system prune --all
+
+now go to your jenkins portal 
+and click on new item 
+name :-mydockerPyApp
+choose Pipeline 
+click ok
+
+Description: This is my python app
+
+Pipeline
+Define your Pipeline using Groovy directly or pull it from source control.
+Definition
+
+choose Pipeline script from SCM
+
+SCM
+git
+
+Repository URL
+https://github.com/dkai89/JenkinsDemo.git
+
+Branches to build
+?
+Branch Specifier (blank for 'any')
+?
+*/main
+
+
+click on save
+
+
+
+
+
+Under Access Tokens, click New Access Token
+
+Give it a name like jenkins-token
+
+Select Read/Write permission
+
+Click Generate
+
+Copy the token immediately (you won’t see it again)
+
+
+2. Jenkins Credential
+In Jenkins, go to:
+Manage Jenkins > Credentials
+
+Under the relevant domain (usually (global)):
+
+Click on your current credential with ID: dockerhub-credentials
+
+Or click Add Credentials to create a new one
+
+Use:
+
+Username: dilipdevops1982 (your DockerHub ID)
+
+Password: Paste the access token you just generated
+
+ID: dockerhub-credentials (so your Jenkinsfile matches)
+
+
+
+🔥 3. Open Port 5000 in Firewall/Security Group
+Agar browser me site nahi khul rahi, to ho sakta hai port 5000 blocked ho.
+
+✅ AWS (example):
+Go to EC2 > Security Groups > Inbound rules
+
+Add a new rule:
+
+Type: Custom TCP
+
+Port range: 5000
+
+Source: Anywhere (0.0.0.0/0) (for public access)
+
+http://<EC2-IP>:5000
+
+
+Example
+http://18.209.18.40:5000
+
+
+now go to your jenkins portal 
+and click on new item 
+name :-mytomcatPyApp
+choose Pipeline 
+click ok
+
+Description: This is my tomcat app
+
+Pipeline
+Define your Pipeline using Groovy directly or pull it from source control.
+Definition
+
+choose Pipeline script from SCM
+
+SCM
+git
+
+Repository URL
+https://github.com/dkai89/JenkinsDemo.git
+
+Branches to build
+?
+Branch Specifier (blank for 'any')
+?
+*/main
+
+
+Script Path
+my_tomcat_app/Jenkinsfile
+
+click on save
+
+click build now 
+
+check your docker hub repo new image will be added
+
+
+
+
+
