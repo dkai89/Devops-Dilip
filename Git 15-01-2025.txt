@@ -1,0 +1,128 @@
+ 1  cd r:
+    2  mkdir myproject_app
+    3  ls
+    4  cd myproject_app/
+    5  PS1="myLocal Git $ "
+    6  git --version
+    7
+    8  git config --global user.name "Dilipkumar"
+    9  git config --global user.email "kumardilip19828979@gmail.com"
+   10  git config --global core.editor "notepad"
+   11  git config --list
+   12  pwd
+   13  
+   14  myLocal Git $ pwd
+   15  /c/Users/lenovo/myproject_app
+   16  myLocal Git $ 
+   17  bash: la: command not found
+   18  myLocal Git $
+   19  ls -la
+   20  git
+   21  git init
+   22  ls -lart
+   23  git config --global user.name "Dilipkumar"
+   24  git config --global user.email "kumardilip19828979@gmail.com"
+   25  git config --global core.editor "notepad"
+   26  git config --list
+   27  git init
+   28  clear
+   29  touch mycode.txt
+   30  ls
+   31  cat mycode.txt
+   32  git status
+   33  git add mycode.txt
+
+   34  git status
+   35  git commit -m "Added mycode file "
+   36 git status
+      
+   37. ls
+   38. touch myDbfile.txt
+   39. ls
+   40. git status
+   41. git add myDbfile.txt
+   42. git status
+   43. git commit -m "Added 2nd file"
+
+   44. git status
+   45. ls
+   46. touch file3.txt
+   47. git status
+   48. git add file3.txt
+   49. git status
+   50. git commit -m "Added 3rd file"
+   51. git status
+   52. git add .
+   53. git status
+   54. git add file1.txt file2.txt mycode.txt  (c)
+   55. git log
+   56. ls
+   57. git status
+   58. cat mycode.txt
+   59. echo "This is my New Line of code" > mycode.txt
+   60. cat mycode.txt
+   61. git status
+   62.ls -a
+   63.  cd  .git
+   64. ls
+   65. cd  objects/
+   66. ls -l
+   67. ls -lrt
+   68. cd ad
+   69. ls
+   70. ls -l
+   75. pwd
+   76. cd /c/Users/lenovo/myproject_app
+
+   77. ls
+   78. git status
+   79. git add mycode.txt
+   80. git status
+git commit -m "Addeda line of code"
+git log --oneline
+git status
+ cd ..
+mkdir mytest
+cd mytest/
+ls -la
+git init
+ls -lart
+git branch
+touch test.txt
+ls
+git status
+git add test.txt
+git branch
+git commit -m "Added a test file"
+git branch
+ cd ..
+ls -lrt
+cd myproject_app/
+ls
+git branch
+git checkout feature-1
+git branch
+ls
+touch FB.txt
+ls
+git status
+git add FB.txt
+git commit -m "Added a file at FB"
+ls
+git branch
+git checkout master
+git branch
+ls
+git branch
+git merge feature-1
+ls
+git branch
+git status
+git log
+ 
+
+
+
+
+
+
