@@ -1,0 +1,229 @@
+31-01-2025 doker and kubernates 
+
+1.eksctl create cluster --name my-lab-cluster --region Stockholm
+eu-north-1 --node-type t2.medium
+2. PS1="k8s $ "    (Next line 11) accourding to sir's vedios
+
+3. 
+4. ####Extra commands] [nano nginx-deployment.yaml]   To 
+5. kubectl apply -f nginx-deployment.yaml
+6.
+7.
+8. kubectl delete pods --all
+9.kubectl get deployments
+10.##### [kubectl delete deployment demo-nginx hello-node] Extra commands
+11. kubectl get pods
+
+12. nano nginx-deployment.yaml 
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+
+
+13. kubectl apply -f nginx-deployment.yaml
+15. kubectl get pod 
+16. kubectl get pod
+17. kubectl get pod --show-labels
+18. nano nginx-clusterip-svc.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-clusterip-svc
+  labels:
+    app: nginx
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80        # Port exposed by the Service
+      targetPort: 80  # Port exposed by the Pod (nginx container)
+  type: ClusterIP      # Internal service within the cluster
+
+
+
+19.kubectl get svc 
+20.kubectl apply -f nginx-clusterip-svc.yaml 
+21. kubectl get svc
+
+22. [[source <(kubectl completion bash)]] 
+
+23. [[ echo "source <(kubectl completion bash)" >> ~/.bashrc]]
+
+24.kubectl get po --show-labels 
+25. alias k=kubectl
+26. k get svc
+27. kubectl get pod -o wide
+28. kubectl get svc nginx-clusterip-svc
+29. kubectl describe svc nginx-clusterip-svc
+30. kubectl get ep nginx-clusterip-svc 
+31. kubectl describe ep  nginx-clusterip-svc
+32. kubectl get pod -o wide
+33. kubectl delete pod nginx-deployment-84c5b8588f-glfzm
+34. kubectl get pod -o wide
+35. kubectl describe ep  nginx-clusterip-svc
+36. kubectl get deploy
+37. kubectl delete deploy nginx-deployment
+38. kubectl get svc
+39. kubectl delete svc nginx-clusterip-svc
+40. kubectl get ep
+41. > nginx-deployment.yaml
+42. nano nginx-deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+
+43. kubectl get pod
+44. kubectl apply -f nginx-deployment.yaml
+45. nano nginx-nodeport-svc.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-clusterip-svc
+  labels:
+    app: nginx
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80        # Port exposed by the Service
+      targetPort: 80  # Port exposed by the Pod (nginx container)
+  type: ClusterIP      # Internal service within the cluster
+
+46. kubectl apply -f nginx-nodeport-svc.yaml 
+47. kubectl get svc
+48. kubectl get svc nginx-clusterip-svc
+49. kubectl describe svc nginx-clusterip-svc
+50. kubectl describe ep nginx-nodeport-svc (1:02:16)
+i (used kubectl describe ep nginx-clusterip-svc )
+
+
+51.kubectl get svc 
+52. kubectl get deploy
+53. kubectl delete deploy nginx-deployment
+54. kubectl delete svc nginx-nodeport-svc (1:12:02)
+55. > nginx-deployment.yaml
+56. nano nginx-deployment.yaml
+
+57. nano nginx-clb-svc.yaml
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-clb-svc
+  labels:
+    app: nginx
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80        # Port exposed externally by the Load Balancer
+      targetPort: 80  # Port exposed by the  NGINX container
+  type: ClusterIP      # creates an external AWS classic Load Balancer (CLB)
+
+
+58. ls -lart
+59. kubectl apply -f nginx-deployment.yaml
+60. kubectl apply -f nginx-clb-svc.yaml
+61. kubectl get pod
+62. kubectl get svc
+63. kubectl delete svc nginx-clb-svc  
+64. kubectl delete deploy nginx-deployment
+65. kubectl get pod
+66. kubectl get pod -n kube-system
+67. kubectl get ns
+68. kubectl create ns myapp
+69. kubectl get ns
+70. kubectl delete ns myapp
+71. nano myapp-namespace.yaml
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: myapp
+
+72. kubectl apply -f myapp-namespace.yaml
+73. > nginx-deployment.yaml
+74. nano nginx-deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: myapp  # Namespace where this Deployment will be created
+  labels:
+    app: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx-container
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+
+
+75. kubectl apply -f nginx-deployment.yaml
+76. kubectl get pod
+77. kubectl get -n myapp pod
+78. kubectl get po --all-namespaces
+79. kubectl get all --all-namespaces
+80. kubectl get sa
+81. kubectl get sa -n myapp
+
+
+82. kubernates: NameSpace/Roles and Roles binding / Cluster Roles and Cluster Role bindings / Service Acount
+                ConfigMap and Secret   Statefuls and DaemonSets
+
+83. (1:51) roki vedio 
+84. 
+85. 
