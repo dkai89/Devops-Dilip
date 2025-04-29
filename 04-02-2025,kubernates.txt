@@ -1,0 +1,293 @@
+04-02-2025 kubernates
+
+kubectl get nodes
+1. PS1="k8s $ "
+
+clear
+
+
+2.ls -lart
+3. kubectl get ns
+4. kubectl get sa
+5. ls -lrt
+6.
+7.(From chat gpt)
+To create and edit a Kubernetes Namespace YAML file using `nano`, follow these steps:
+
+### Open `nano` to create the file:
+```sh
+nano namespace.yaml
+```
+
+### Inside the file, add the following YAML content:
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: my-namespace  # Change this to your desired namespace name
+
+Like 
+
+K8S $ nano namespace-test.yaml
+K8S $ cat namespace-test.yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: test
+
+
+```
+
+### Save and exit `nano`:
+1. Press `CTRL + X` to exit.  
+2. Press `Y` to confirm saving.  
+3. Press `Enter` to save with the same filename.  
+
+[this is accourding to vedio 
+
+kubectl apply -f namespace-test.yaml
+
+kubectl apply -f namespace-prod.yaml]
+
+
+
+### Apply the Namespace to Kubernetes:
+```sh
+kubectl apply -f namespace.yaml
+```
+
+### Verify the Namespace:
+```sh
+kubectl get namespaces
+```
+
+Let me know if you need modifications! 🚀
+
+
+
+
+
+8. Also Chat Gpt
+To create a Kubernetes Namespace YAML file named `namespace-prod.yaml`, follow these steps:
+
+### Open `nano` to create the file:
+```sh
+nano namespace-prod.yaml
+```
+
+### Inside the file, add the following YAML content:
+```yaml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: prod  # This is the production namespace
+```
+
+### Save and exit `nano`:
+1. Press `CTRL + X` to exit.  
+2. Press `Y` to confirm saving.  
+3. Press `Enter` to save with the same filename.  
+
+### Apply the Namespace to Kubernetes:
+```sh
+kubectl apply -f namespace-prod.yaml
+```
+
+### Verify the Namespace:
+```sh
+kubectl get namespaces
+```
+
+Let me know if you need any modifications! 🚀
+
+LEFT (ON 29:52)
+======================================================================================================================
+9.kubectl get sa  
+10.cat namespace-test.yaml
+11.cat namespcace-prod.yaml
+kubectl apply -f namespace-prod.yaml
+12.kubectl apply -f namespace-test.yaml
+13.kubeckubectl apply -f namespace-test.yamltl apply -f namespace-prod.yaml
+15.kubectl get ns
+16.clear 
+17.kubectl get sa -n test 
+18.kubectl get sa -n pro  [ these changes has been done accourding the video]
+
+K8S $ nano serviceaccount-test.yaml
+K8S $ kubectl apply -f serviceaccount-test.yaml
+serviceaccount/test-service-account created
+K8S $ cat serviceaccount-test.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: test-service-account
+  namespace: test
+
+nano serviceaccount-prod.yaml
+
+K8S $ nano serviceaccount-prod.yaml
+K8S $ kubectl apply -f serviceaccount-prod.yaml
+serviceaccount/prod-service-account created
+K8S $ cat serviceaccount-prod.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prod-service-account
+  namespace: prod
+
+
+19.ls -lrt
+20.cat serviceaccount-test.yaml
+21.cat serviceaccount-prod.yaml
+22.kubectl apply -f serviceaccount-test.yaml 
+23.kubectl apply -f serviceaccount-prod.yaml
+24.kubectl get sa -n test
+25.kubectl get sa -n prod
+26.kubectl api-resources
+27.serviceaccounts
+kubectl explain serviceaccounts
+   
+        Left 41:14 c
+28. kubectl get sa
+29. kubectl get sa -n test
+30. kubectl get sa -n prod 
+31. ls -lrt
+
+K8S $ nano role-test.yaml
+K8S $ kubectl apply -f role-test.yaml
+role.rbac.authorization.k8s.io/test-role created
+K8S $ cat role-test.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: test
+  name: test-role
+rules:
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "list", "create", "delete"]
+
+32. cat role-test.yaml
+33. cat rolebinding-test.yaml
+
+K8S $ nano rolebinding-test.yaml
+K8S $ kubectl apply -f rolebinging-test.yaml
+error: the path "rolebinging-test.yaml" does not exist
+K8S $ kubectl apply -f rolebinding-test.yaml
+rolebinding.rbac.authorization.k8s.io/test-rolebinding created
+K8S $ cat rolebinding-test.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: test-rolebinding
+  namespace: test
+subjects:
+  - kind: ServiceAccount
+    name: test-service-account
+    namespace: test
+roleRef:
+  kind: Role
+  name: test-role
+  apiGroup: rbac.authorization.k8s.io
+
+
+34. cat role-prod.yaml
+35. ls -lrt
+36. kubectl apply -f role-test.yaml
+37. kubectl apply -f role-prod.yaml
+38. kubectl apply -f rolebinding-prod.yaml
+39. kubectl get roles -n test
+40. kubectl describe role test-role -n test
+41. kubectl get rolebindings -n test
+42. kubectl describe rolebinding test-rolebinding -n test
+43. kubectl describe rolebinding prod-rolebinding -n prod
+44. kubectl auth can-i list pods --as=system:serviceaccount:test:test-service-account -n test (this will work)
+45. kubectl auth can-i list pods --as=system:serviceaccount:test:test-service-account -n prod ( this command not is work)
+46. kubectl auth can-i list pods --as=system:serviceaccount:prod:prod-service-account -n prod
+47. kubectl auth can-i list pods --as=system:serviceaccount:prod:prod-service-account -n test
+48. repeate (47) here
+49. kubectl auth can-i list pods --as=system:serviceaccount:prod:prod-service-account -n prod (also repeate)
+50. kubectl auth can-i list pods --as=system:serviceaccount:test:test-service-account -n prod
+51. ls -lrt
+52. cat clusterrole.yaml
+53. cat clusterrolebinding.yaml
+54. kubectl apply -f clusterrole.yaml
+55. kubectl  apply -f clusterrolebinding.yaml
+56. kubectl auth can-i list pods --as=system:serviceaccount:test:test-service-account -n prod (now result will show yes)
+57. kubectl auth can-i list pods --as=system:serviceaccount:prod:prod-service-account -n test (now result will show yes)
+58. kubectl get pod
+59. nano deployment-emptydir.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment-emptydir
+  labels:
+    app: nginx-emptydir
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx-emptydir
+  template:
+    metadata:
+      labels:
+        app: nginx-emptydir
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: shared-storage
+          mountPath: /usr/share/nginx/html   # Mounts the shared storage here
+
+      - name: sidecar-container
+        image: busybox
+        command: ["/bin/sh", "-c", "echo 'Hello from sidecar' > /shared-data/index.html; sleep 3600"]
+        volumeMounts:
+        - name: shared-storage
+          mountPath: /shared-data            # Sidecar container writes to the shared storage
+
+      volumes:
+      - name: shared-storage
+        emptyDir: {}                         # Defines an emptyDir volume
+
+
+
+60. kubectl apply -f deployment-emtydir.yaml
+61. kubectl get pod
+62. kubectl get pod
+63.  kubectl get pod
+64. kubectl exec -it nginx-deployment-emptydir-6db547b4b9-lcqwz -c nginx-container --/bin/sh
+65. ls 
+67. df -f
+68. bash
+69. nginx-deployment-emptydir-6db547b4b9-lcqwz:# cd /usr/share/nginx/html/
+70. ls  ( result : index.html)
+71. cat index.html (  result will show : hello from sidecar)
+
+ON DUPLICATE SESSION
+
+
+72. kubect get pod
+73. kubectl exec -it nginx-deployment-emptydir-6db547b4b9-lcqwz -c nginx-container --/bin/sh
+will show#
+ will show #
+
+74. cd /shared-data
+75. ls
+76. cat index.html 
+77. echo "this is second line" >> index.html
+78. cat index.html
+
+NOW ON GOING TO PRIVIOUS CONTAINER 
+
+79. cat index.html 
+80. exit
+81. kubectl exec -it nginx-deployment-emptydir-6db547b4b9-lcqwz -c nginx-container --/bin/sh (by sir ctrl+c)
+82.
+83.
+84
+85.
