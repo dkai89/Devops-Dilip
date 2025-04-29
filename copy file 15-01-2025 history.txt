@@ -1,0 +1,133 @@
+copy file of 15/01/2025
+
+    1  cd r:
+    2  mkdir myproject_app
+    3  ls
+    4  cd myproject_app/
+    5  PS1="myLocal Git $ "
+    6  git --version
+    7
+    8  git config --global user.name "Dilipkumar"
+    9  git config --global user.email "kumardilip19828979@gmail.com"
+   10  git config --global core.editor "notepad"
+   11  git config --list
+   12  pwd
+   13  la -la
+   14  myLocal Git $ pwd
+   15  /c/Users/lenovo/myproject_app
+   16  myLocal Git $ la -la
+   17  bash: la: command not found
+   18  myLocal Git $
+   19  ls -la
+   20  git
+   21  git init
+   22  ls -lart
+   23  git config --global user.name "Dilipkumar"
+   24  git config --global user.email "kumardilip19828979@gmail.com"
+   25  git config --global core.editor "notepad"
+   26  git config --list
+   27  git init
+   28  clear
+   29  touch mycode.txt
+   30  ls
+   31  cat mycode.txt
+   32  git status
+   33  history
+   34  git add mycode.txt
+   35  git status
+   36  git status
+   37  git commit -m "Added mycode file "
+   38  clear
+   39  git status
+   40  ls
+   41  touch myDbfile.txt
+   42  ls
+   43  git status
+   44  git add myDbfile.txt
+   45  git status
+   46  git commit -m "Added 2nd file"
+   47  git status
+   48  clear
+   49  ls
+   50  touch file3.txt
+   51  git status
+   52  git add file3.txt
+   53  git status
+   54  git commit -m "Added 3rd file"
+   55  git status
+   56  git add .
+   57  git status
+   58  git log
+   59  ls
+   60  git status
+   61  clear
+   62  cat mycode.txt
+   63  echo  "This is my New Line of code" > mycode.txt
+   64  cat mycode.txt
+   65  git status
+   66  ls -a
+   67  cd  .git
+   68  ls
+   69  cd objects/
+   70  ls
+   71  ls -l
+   72  ls -lrt
+   73  cd id
+   74  ls
+   75  cd ad
+   76  ls
+   77  ls -l
+   78  pwd
+   79  cd /c/Users/lenovo/myproject_app
+   80  clear
+   81  ls
+   82  git status
+   83  git add mycode.txt
+   84  git status
+   85  git commit -m "Addeda lines of code"
+   86  git log --oneline
+   87  git status
+   88  cd ..
+   89  mkdir mytest
+   90  cd mytest/
+   91  ls
+   92  ls -la
+   93  git init
+   94  clear
+   95  ls -lart
+   96  git branch
+   97  touch test.txt
+   98  ls
+   99  git status
+  100  git add test.txt
+  101  git branch
+  102  git commit -m "Added a test file"
+  103  git branch
+  104  cd ..
+  105  ls -lrt
+  106  cd myproject_app/
+  107  ls
+  108  git branch
+  109  git branch feature-1
+  110  git branch
+  111  git checkout feature-1
+  112  git branch
+  113  ls
+  114  touch FB.txt
+  115  ls
+  116  git status
+  117  git add FB.txt
+  118  git commit -m "Added a file at FB"
+  119  ls
+  120  git branch
+  121  git checkout master
+  122  git brach
+  123  git branch
+  124  ls
+  125  git branch
+  126  git merge feature-1
+  127  ls
+  128  git branch
+  129  git status
+  130  git log
+  131   history
