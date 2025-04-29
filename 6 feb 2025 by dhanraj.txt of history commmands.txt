@@ -1,0 +1,136 @@
+    1  PS1="EKS $ " 
+    2  sudo apt update
+    3  aws --version
+    4  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" 
+    5  unzip awscliv2.zip
+    6  sudo unzip awscliv2.zip
+    7  sudo apt update && sudo apt install -y unzip
+    8  unzip awscliv2.zip
+    9  sudo ./aws/install
+   10  sudo sudo ./aws/install
+   11  PS1="EKS $ " 
+   12  sudo apt update
+   13  aws --version
+   14  aws s3 ls
+   15  aws configure
+   16  aws --version
+   17  curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
+   18  chmod +x ./kubectl
+   19  sudo mv ./kubectl /usr/local/bin
+   20  kubectl version --short --client
+   21  curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+   22  sudo mv /tmp/eksctl /usr/local/bin
+   23  eksctl version
+   24  cd /tmp
+   25  ls -lrt
+   26  sudo mv /tmp/eksctl /usr/local/bin
+   27  eksctl version
+   28  eksctl create cluster --name my-cluster    --region ap-south-1    --nodegroup-name my-nodegroup    --node-type t3.micro    --nodes 2
+   29  kubectl get nodes
+   30  kubectl get pv
+   31  nano pv.yaml
+   32  kubectl apply -f pv.yaml
+   33  kubectl get pv
+   34  nano pvc.yaml
+   35  kubectl apply -f pvc.yaml
+   36  kubectl get pv
+   37  > nginx.yaml
+   38  nano nginx.yaml
+   39  kubectl apply -f nginx.yaml
+   40  kubectl get pod
+   41  kubectl exec -it nginx-deployment-5c794987d4-4wfhx --/bin/bash
+   42  kubectl exec -it nginx-deployment-5c794987d4-4wfhx -- /bin/bash
+   43  kubectl get pods
+   44  kubectl get nodes
+   45  kubectl describe pod nginx-deployment-5c794987d4-4wfhx
+   46  aws eks describe-cluster --name my-cluster --region ap-south-1 --query "cluster.status"
+   47  kubectl get nodes
+   48  eksctl create nodegroup --cluster my-cluster    --region ap-south-1    --name my-nodegroup    --node-type t3.micro    --nodes 2
+   49  kubectl describe nodes | grep -A 10 "Non-terminated Pods:"
+   50  eksctl scale nodegroup --cluster my-cluster    --name my-nodegroup    --nodes 3 --region ap-south-1
+   51  kubectl get nodes
+   52  kubectl delete pod nginx-deployment-5c794987d4-4wfhx
+   53  kubectl get pods
+   54  eksctl create nodegroup --cluster my-cluster    --region ap-south-1    --name my-nodegroup-large    --node-type t3.medium    --nodes 2
+   55  kubectl get pod
+   56  kubectl exec -it nginx-deployment-5c794987d4-nhrr4 --/bin/bash
+   57  kubectl exec -it nginx-deployment-5c794987d4-nhrr4 -- /bin/bash
+   58  kubectl get pv
+   59  kubectl get pvc 
+   60  kubectl get deployments.apps
+   61  kubectl delete deployment.apps nginx-deployment
+   62  kubectl delete pv nginx-pv
+   63  kubectl -n kube-system describe configmap aws-auth
+   64  curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+   65  chmod 700 get_helm.sh
+   66  ./get_helm.sh
+   67  helm
+   68  helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver --namespace kube-system
+   69  helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver
+   70  helm repo update
+   71  helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver   --namespace kube-system   --set enableVolumeScheduling=true   --set enableVolumeResizing=true   --set enableVolumeSnapshot=true
+   72  helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver --namespace kube-system
+   73  helm list -A | grep aws-ebs-csi-driver
+   74  kubectl get pods -n kube-system | grep ebs
+   75  kubectl get csidrivers
+   76  kubectl get pods -n kube-system | grep ebs
+   77  nano storageclass.yaml
+   78  kubectl apply -f storageclass.yaml
+   79  kubectl get storageclass
+   80  > pvc.yaml
+   81  nano pvc.yaml
+   82  kubectl apply -f pvc.yaml
+   83  kubectl get pvc
+   84  > test-pod.yaml
+   85  test-pod.yaml
+   86  nano test-pod.yaml
+   87  kubectl apply -f test-pod.yaml
+   88  nano test-pod.yaml
+   89  kubectl get storageclass
+   90  > test-pod.yaml
+   91  nano test-pod.yaml
+   92  kubectl apply -f storage-class.yaml
+   93  nano test-pod.yaml
+   94  kubectl delete pvc ebs-pvc
+   95  kubectl apply -f pvc.yaml
+   96  kubectl apply -f test-pod.yaml
+   97  kubectl get pods
+   98  kubectl get pvc
+   99  kubectl describe pvc ebs-pvc
+  100  kubectl describe pod test-pod
+  101  ### **🔍 Issue: Pod & PVC Still in Pending State**
+  102  Your **`test-pod` is stuck in Pending**, and **`ebs-pvc` is also Pending**.  
+  103  This indicates that Kubernetes **is unable to provision an EBS volume**.  
+  104  ---
+  105  ### **🔎 Debugging Steps**
+  106  #### **1️⃣ Check PVC Events**
+  107  Run:
+  108  ```bash
+  109  kubectl describe pvc ebs-pvc
+  110  ```
+  111  >configmap.yaml
+  112  nano configmap.yaml
+  113  >configmap.yaml
+  114  nano configmap.yaml
+  115  kubectl apply -f configmap.yaml
+  116  kubectl get cm
+  117  kubectl describe cm nginx-config
+  118  > nginx-deployment-configmap.yaml
+  119  nano nginx-deployment-configmap.yaml
+  120  kubectl apply -f nginx-deployment-configmap.yaml
+  121  kubectl get pods
+  122  >nginx-service.yaml
+  123  nano nginx-service.yaml
+  124  kubectl apply -f nginx-service.yaml
+  125  kubectl get svc
+  126  kubectl get pod -o wide
+  127  nano secret.yaml
+  128  kubectl apply -f secret.yaml
+  129  kubectl get secret
+  130  kubectl describe secret app-secret
+  131  nano nginx-deployment-secret.yaml
+  132  kubectl apply -f nginx-deployment-secret.yaml
+  133  kubectl get pods
+  134  kubectl exec -it nginx-deployment-6cb77bc6-r7bdf   
+  135  kubectl exec -it nginx-deployment-6cb77bc6-r7bdf -- /bin/sh
+  136  history
