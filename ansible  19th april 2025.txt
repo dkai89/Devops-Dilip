@@ -1,0 +1,74 @@
+Create an instance which name is master_ansible and make also two more instace one name is webservers, another is dbservers.
+first connect master_ansible and perform below command.
+sudo apt update
+sudo apt install software-properties-common
+sudo add-apt-repository --yes --update ppa:ansible/ansible
+sudo apt install ansible
+ansible --version
+cd /usr/lib/python3/dist-packages/ansible
+ls
+cd modules
+ls
+cd ..
+cd /etc//ansible/
+cat hosts
+------------------------------------
+20th feb
+Note :- if you start futher first below () commands if you start after some time 
+so, you no need to type below () commands. 
+
+(cd ../..
+cd /home/ubuntu)
+--------------------------
+Master_ansible instance
+
+PS1="Ansible $"
+
+webservers instance
+PS1="webservers $"
+
+dbservers instance
+PS1="dbservers $"
+-----------------
+Master_ansible instance
+ssh 172.31.18.248 (the privateIPs of webservers instance)
+yes
+
+id
+ssh-keygen -t rsa
+enter 
+enter
+enter
+cd /home/ubuntu/.ssh
+ls
+cat id_rsa.pub
+copy the output 
+
+go to your webservers instance
+id
+cd .ssh
+ls
+vi authorized_keys (when that file opened just paste all the matter and save it)
+go to Master_ansible instance
+ssh 172.31.18.248 (the privateIPs of webservers instance)
+
+go to your dbservers instance
+id
+cd .ssh
+ls
+vi authorized_keys (when that file opened just paste all the matter and save it)
+go to Master_ansible instance
+ssh 172.31.25.45 (the privateIPs of dbservers instance)
+--------------
+
+go to Master_ansible instance
+sudo vi /etc/ansible/hosts
+
+skip that (cd /usr/lib/python3/dist-packages/ansible
+ls 
+cd modules
+ls
+
+ansible -m user -a "name=dhanraj password=password123" webservers --become)
+
+
