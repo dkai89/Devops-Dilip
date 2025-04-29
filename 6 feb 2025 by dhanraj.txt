@@ -1,0 +1,344 @@
+vi pv.yaml
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nginx-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: manual
+  hostPath:
+    path: /data/nginx
+
+kubectl apply -f pv.yaml
+
+kubectl get pv
+
+vi pvc.yaml
+
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nginx-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: manual
+
+kubectl apply -f pvc.yaml 
+kubectl get pv
+
+
+> nginx.yaml
+vi nginx.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: "/usr/share/nginx/html"
+              name: nginx-storage
+      volumes:
+        - name: nginx-storage
+          persistentVolumeClaim:
+            claimName: nginx-pvc
+
+kubectl apply -f nginx.yaml
+kubectl get pod
+
+kubectl exec -it nginx-deployment-67658d4df5-5cp7n -- /bin/bash (change this according to your deployement file "-67658d4df5-5cp7n"
+
+ls
+ 
+
+cd /usr/share//nginx/
+
+ls
+cd html/
+ls
+pwd
+exit
+kubectl get pv
+kubectl get pvc
+kubectl get deployments.apps
+kubectl delete deployment.apps nginx-deployment
+kubectl delete pv nginx-pv
+
+lets create policy 
+
+{
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Effect": "Allow",
+          "Action": [
+            "kms:CreateGrant",
+            "kms:ListGrants",
+            "kms:RevokeGrant"
+          ],
+          "Resource": ["arn:aws:kms:us-east-2:183631303588:key/22d7c81d-e96b-45f3-90b1-e2be0b33da5c"],
+          "Condition": {
+            "Bool": {
+              "kms:GrantIsForAWSResource": "true"
+            }
+          }
+        },
+        {
+          "Effect": "Allow",
+          "Action": [
+            "kms:Encrypt",
+            "kms:Decrypt",
+            "kms:ReEncrypt*",
+            "kms:GenerateDataKey*",
+            "kms:DescribeKey"
+          ],
+          "Resource": ["arn:aws:kms:us-east-2:183631303588:key/22d7c81d-e96b-45f3-90b1-e2be0b33da5c"]
+        }
+      ]
+    }
+
+after create policy lets make a role 
+kubectl -n kube-system describe configmap aws-auth
+
+choose you group copy last digit and search it at the role's panel 
+attach the policy who you make.
+
+downloading helm
+
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+chmod 700 get_helm.sh
+./get_helm.sh
+
+helm
+
+helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver
+helm repo update
+
+helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver \
+  --namespace kube-system \
+  --set enableVolumeScheduling=true \
+  --set enableVolumeResizing=true \
+  --set enableVolumeSnapshot=true
+
+if you are getting error kind apply below command
+
+helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver --namespace kube-system
+helm list -A | grep aws-ebs-csi-driver
+kubectl get pods -n kube-system | grep ebs
+kubectl get csidrivers
+kubectl get pods -n kube-system | grep ebs
+
+
+vi storageclass.yaml
+
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ebs-sc
+provisioner: ebs.csi.aws.com
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+  type: gp3
+
+kubectl apply -f storageclass.yaml
+kubectl get storageclass
+
+
+> pvc.yaml
+vi pvc.yaml
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ebs-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ebs-sc
+
+kubectl apply -f pvc.yaml
+kubectl get pvc
+
+> test-pod.yaml
+test-pod.yaml
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ebs-sc
+
+kubectl apply -f test-pod.yaml
+kubectl get pvc
+
+
+>configmap.yaml
+vi configmap.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  index.html: |
+    <html>
+    <head>title>Welcome to NGINX</title></head>
+    <body>
+      <h1>Hello from ConfigMap!</h1>
+    </body>
+    </html>
+
+kubectl apply -f configmap.yaml
+kubectl get cm
+kubectl describe cm nginx-config
+
+> nginx-deployment-configmap.yaml
+vi nginx-deployment-configmap.yaml
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  index.html: |
+    <html>
+    <head><title>Welcome to NGINX</title></head>
+    <body>
+    <h1>Hello from ConfigMap!</h1>
+    </body>
+    </html>
+
+kubectl apply -f nginx-deployment-configmap.yaml
+
+kubectl get pods
+
+>nginx-service.yaml
+vi nginx-service.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: "/usr/share/nginx/html"
+              name: html-config-volume
+      volumes:
+        - name: html-config-volume
+          configMap:
+            name: nginx-config
+            items:
+              - key: index.html
+                path: index.html
+
+
+kubectl apply -f nginx-service.yaml
+kubectl get svc
+kubectl get pod -o wide
+
+vi secret.yaml
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secret
+type: Opaque
+data:
+  username: YWRtaW4=    # APP_USERNAME
+  password: cGFzc3dvcmQ=  #  APP_PASSWORD
+
+kubectl apply -f secret.yaml
+kubectl get secret
+kubectl describe secret app-secret
+
+vi nginx-deployment-secret.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+          env:
+            - name: APP_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: username
+            - name: APP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: app-secret
+                  key: password
+
+kubectl apply -f nginx-deployment-secret.yaml
+kubectl get pods
+kubectl exec -it nginx-deployment-6586b4d78c-dstsv -- /bin/sh
+exit
+
+
+
+after all of detele cluster 
+
+
+
