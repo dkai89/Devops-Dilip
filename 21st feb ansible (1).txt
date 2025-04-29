@@ -1,0 +1,373 @@
+sudo yum install tree -y
+ls
+mkdir my_nginx
+cd my_nginx
+ansible-galaxy init nginx_role
+ls
+cd nginx_role
+ls
+cd ..
+tree
+
+nano deploy_nginx.yml
+
+---
+- name: Deploy Nginx on Ubuntu
+  hosts: webservers
+  become: yes
+  roles:
+    - nginx_role
+
+nano inventory.ini
+
+[webservers]
+52.53.224.47  #(this is your webservers public ip)
+
+mkdir roles
+ls
+mv ngix_role roles
+tree
+cd roles
+cd nginx_role
+ls
+cd files
+ls
+
+nano index.html
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hello learner</title>
+</head>
+<body>
+  <h1>Hello! Dhanraj "you are successfully installed and deployed ansible"</h1>
+</body>
+</html>
+
+
+nano mime.types
+
+types {
+    text/html                             html htm shtml;
+    text/css                              css;
+    text/xml                              xml;
+    image/gif                             gif;
+    image/jpeg                            jpeg jpg;
+    application/javascript                js;
+    application/atom+xml                  atom;
+    application/rss+xml                   rss;
+    text/mathml                           mml;
+    image/png                             png;
+    image/svg+xml                         svg svgz;
+    application/font-woff                 woff;
+    application/font-woff2                woff2;
+    application/vnd.ms-fontobject         eot;
+    font/ttf                              ttf;
+    font/otf                              otf;
+    application/vnd.ms-excel              xls;
+    application/vnd.openxmlformats-officedocument.spreadsheetml.sheet  xlsx;
+    application/vnd.ms-powerpoint         ppt;
+    application/vnd.openxmlformats-officedocument.presentationml.presentation pptx;
+    application/pdf                       pdf;
+    application/zip                       zip;
+    application/x-tar                     tar;
+    application/x-gzip                    gz;
+    application/x-bzip2                   bz2;
+    application/x-rar-compressed          rar;
+    application/x-7z-compressed           7z;
+}
+
+cd ..
+ls
+cd handlers
+ls
+
+nano main.yml
+---
+# handlers file for nginx_role
+
+- name: Restart Nginx
+  service:
+    name: nginx
+    state: restarted
+
+# handlers file for ngix_role
+
+cd ..
+ls
+cd tasks
+ls
+nano main.yml
+
+- name: Install Nginx
+  package:
+    name: nginx
+    state: present
+
+- name: Ensure /etc/nginx directory exists
+  file:
+    path: /etc/nginx
+    state: directory
+
+- name: Copy nginx.conf
+  template:
+    src: templates/nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+  notify: Restart Nginx
+
+- name: Copy mime.types
+  copy:
+    src: mime.types
+    dest: /etc/nginx/mime.types
+  notify: Restart Nginx
+
+- name: Ensure /var/www/html directory exists
+  file:
+    path: /var/www/html
+    state: directory
+    owner: nginx
+    group: nginx
+    mode: '0755'
+
+- name: Copy sample index.html to web root
+  copy:
+    src: index.html
+    dest: /var/www/html/index.html
+
+- name: Ensure Nginx is started and enabled
+  service:
+    name: nginx
+    state: started
+    enabled: yes
+
+cd ..
+ls
+
+cd templates
+ls
+
+nano nginx.conf.j2
+
+user nginx;
+worker_processes auto;
+
+error_log /var/log/nginx/error.log warn;
+pid /var/run/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    access_log  /var/log/nginx/access.log;
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+    types_hash_max_size 2048;
+
+    include /etc/nginx/conf.d/*.conf;
+
+    server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        root /var/www/html;
+        index index.html index.htm;
+
+        server_name _;
+
+        location / {
+            try_files $uri $uri/ =404;
+        }
+    }
+}
+
+cd ../../..
+ls
+
+ansible-playbook -i inventory.ini deploy_nginx.yml
+
+
+if this (Are you sure you want to continue connecting (yes/no/[fingerprint])? ) occurs type yes
+
+go to your browser and type this http://52.53.224.47/ (52.53.224.47 target machine public ip)
+
+go to home by cd ..
+
+mkdir my_Docker_App
+cd my_Docker_App
+ansible-galaxy init deploy_docker_app
+mkdir roles
+ls
+mv deploy_docker_app roles
+ls
+tree
+
+nano deploy_flask_app.yml
+---
+- name: Deploy Flask Docker Application
+  hosts: webservers
+  become: yes
+  roles:
+    - deploy_docker_app
+
+cd roles
+
+tree
+
+ls
+cd deploy_docker_app
+ls
+cd files
+ls
+
+nano Dockerfile
+
+FROM python:3.9
+
+WORKDIR /app
+
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+
+COPY . .
+
+CMD ["python", "app.py"]
+
+nano app.py
+
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route('/')
+def home():
+    return "Hello, this is a Flask app running in Docker!"
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+
+nano docker-compose.yml 
+
+version: '3'
+services:
+  flask_app:
+    build: .
+    container_name: flask_app_container
+    ports:
+      - "5000:5000"
+
+nano requirements.txt
+
+flask
+
+cd ..
+ls
+
+cd meta
+ls
+
+nano main.yml
+
+galaxy_info:
+  author: your name
+  description: your role description
+  company: your company (optional)
+  license: GPL-2.0-or-later
+  min_ansible_version: 2.1
+  galaxy_tags: []
+
+dependencies: []
+
+cd ..
+ls
+cd tasks
+ls
+nano main.yml
+
+---
+- name: Install Docker
+  package:
+    name: docker
+    state: present
+
+- name: Download Docker Compose binary
+  get_url:
+    url: https://github.com/docker/compose/releases/download/v2.24.5/docker-compose-linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: '0755'
+
+- name: Create symlink for docker-compose (if needed)
+  file:
+    src: /usr/local/bin/docker-compose
+    dest: /usr/bin/docker-compose
+    state: link
+
+- name: Start and enable Docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: Create app directory
+  file:
+    path: /opt/flask_app
+    state: directory
+
+- name: Copy application files
+  copy:
+    src: "{{ item }}"
+    dest: /opt/flask_app/
+  with_items:
+    - app.py
+    - Dockerfile
+    - requirements.txt
+    - docker-compose.yml
+
+- name: Run Flask App with Docker Compose
+  command: docker-compose up -d
+  args:
+    chdir: /opt/flask_app
+
+cd ..
+ls
+cd tests
+ls
+nano inventory 
+
+[webservers]
+13.57.40.223
+
+nano test.yml
+
+---
+- name: Test Role
+  hosts: webservers
+  become: yes
+  roles:
+    - deploy_docker_app
+
+
+cd ../../..
+ls
+
+ansible-playbook -i roles/deploy_docker_app/tests/inventory deploy_flask_app.yml
+
+go to your browser and types as below.
+http://13.57.40.223:5000/ [#13.57.40.223 this is your webservers public key]
+
+
+cd .. [ no need this command right now]
+
+
+
+
+
+
+
+
