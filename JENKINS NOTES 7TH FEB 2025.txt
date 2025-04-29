@@ -1,0 +1,79 @@
+ make an instance in any region in which you want then follow the below steps to install jenkins
+when the instance is made 
+
+Go to AWS Console → EC2 Dashboard.
+
+Select your EC2 instance.
+
+Scroll down to Security Groups and click on the associated security group.
+
+Click Edit inbound rules → Add Rule.
+
+Select Custom TCP Rule, enter 8080 as the port, and set:
+
+Source: My IP (if only you need access)
+
+OR Source: 0.0.0.0/0 (if you want to allow access from anywhere, but this is less secure)
+
+Click Save Rules.
+
+
+Step # 1 : Installation of Java
+sudo apt update
+sudo apt install openjdk-17-jdk
+java -version
+
+
+
+Step#2: Install jenkins [https://www.jenkins.io/doc/tutorials/tutorial-for-installing-jenkins-on-AWS/]
+sudo wget -O /usr/share/keyrings/jenkins-keyring.asc https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc]" https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+sudo apt-get update
+sudo apt-get install jenkins
+
+
+Step#3:
+sudo systemctl start jenkins
+sudo systemctl status jenkins
+sudo systemctl enable jenkins
+
+
+Step#4:
+Access Jenkins
+http://PUBLIC_IP_ADDR:8080   (paste your PublicIPs_Address)
+sudo cat /var/lib/jenkins/secrets/initialAdminPassword (use this extract the admin passward to access the jenkins)
+
+Examples
+http://4.240.89.116:8080
+http://4.240.89.116:8080/
+
+13.203.160.92:8080 (current)
+
+
+select install suggested plugins option
+
+after sometime create admin option
+
+
+username : admin 
+passward : as you wish 
+full name : as you wish
+email address: you want to use 
+ click save and continue
+
+
+jenkins url shows
+click save and continue 
+
+Now all set to go!!!
+
+
+
+
+
+
+SAVE THIS TO YOUR OPERA MAIN WINBOW TO ACCESS THIS FOR FURTHER USE. OK!!!!! 
+
+
+
+
