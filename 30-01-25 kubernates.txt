@@ -1,0 +1,163 @@
+30/01/25 kubernates here work on AWS CLI EC2 (9:12 to 12:50)
+on putty work (13:42 to 14:38)
+
+1.PS1="EKS $ "     (CLR)
+2.aws --version (16:52) ,,,, aws cli installation for linux,window, mac 
+3. KUBECTL DOUWNLOAD KAREIN USE COMMANDS
+4. curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"        (ls)
+unzip awscliv2.zip
+sudo ./aws/install
+to very type(aws --version)
+now you have to assign (IAM Role) for your instance
+Go to action-security-Modify IAM role
+HERE (AWS_ADMIN_ROLE OPTION IS NOT COMMING)
+
+A. Setup kubectl: a. Download kubectl version 1.21
+ curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
+ chmod +x ./kubectl
+ mv ./kubectl /usr/local/bin
+
+b. Test kubectl installation:
+
+kubectl version --short --client
+
+5.
+6.
+
+Setup eksctl: a. Download and extract the latest release
+
+curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+sudo mv /tmp/eksctl /usr/local/bin
+b. Test eksctl installation:
+
+eksctl version
+
+7.cd /tmp
+8.ls -lart
+9.sudo mv /tmp/eksctl /usr/local/bin
+10.eksctl version 
+
+11.now go to amazon eks cluster to duplicate tab  eksctl create cluster --name my-cluster \
+   --region eu-north-1 \
+   --node-type t3.micro 
+
+12. FOR STUDY DOCUMENTS (https://aws.amazon.com/eks/faqs/)
+13. kubectl get nodes
+15.nano mydep.yaml 
+
+apiVersion: apps/v1 kind: Deployment metadata: name: nginx-deployment labels: app: nginx spec: replicas: 3 selector: matchLabels: app: nginx strategy: type: RollingUpdate rollingUpdate: maxUnavailable: 1 maxSurge: 1 template: metadata: labels: app: nginx spec: containers: - name: nginx-container image: nginx:1.19  # Initial version ports: - containerPort: 80
+
+16. kubectl api-versions
+17. https://kubernetes.io/docs/reference/kubectl/quick-reference/
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 10
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+
+
+18. ls
+19. nano nginx-deployment.yaml
+20. kubectl get pod
+21. ls
+22. kubectl apply -f nginx-deployment.yaml
+23. kubectl get pod
+24. kubectl get pod -o wide
+25.  kubectl delete pod nginx-deployment-6b89c95cb4-c2h4p
+26. kubectl get pod -o wide
+27. kubectl delete pod nginx-deployment-6b89c95cb4-j2847 nginx-deployment-6b89c95cb4-j7dgb
+28. kubectl get pod -o wide  (start next 30)
+
+(kubectl api-resources)
+kubectl get nodes
+
+
+29.kubectl get pod -o wide
+30. kubectl get deploy 
+31.kubectl delete deploy nginx-deployment
+32. > nginx-deployment.yaml
+33. nano nginx-deployment.yaml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 8
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx-container
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+
+34. kubectl apply -f nginx-deployment.yaml
+35. kubectl get pod
+36. kubectl get pod --show-labels
+37. eksctl delete cluster my-lab-cluster --region us-west-1
+38. 
+39. 
+40. 
+41. 
+42. 
+43. 
+44. 
+45. 
+46. 
+47. =======================================================================
+         [ it is practical purpose ]
+
+48. eksctl create cluster --name my-cluster \
+   --region us-west-1 \
+   --node-type t3.medium
+49. 
+50. 
+51. kubectl delete svc <service-name> -n <namespace>
+52. 
+53. kubectl delete svc  default     -n kubernetes                       
+kubectl delete svc kube-system   -n eks-extension-metrics-api     
+kubectl delete svc kube-system   -n kube-dns                        
+kubectl delete svc kube-system   -n metrics-server
+54. 
+55. 
+56. kubectl delete svc <service-name> -n <namespace>
+NAMESPACE   NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+default     kubernetes   ClusterIP   10.100.0.1   <none>        443/TCP   3m31s
+
+
+57. kubectl delete svc kubernetes -n default
+58. 
+59. eksctl get clusters --region us-west-1
+
+60. 
+61. 
+62.
+63.  
+64. 
+65.
