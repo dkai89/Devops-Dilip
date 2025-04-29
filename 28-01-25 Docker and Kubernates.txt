@@ -1,0 +1,88 @@
+28-01-25 Docker and Kubernates
+
+sudo su -
+sudo apt-get update
+docker
+docker ps
+docker ps -a
+docker system prune   and type     y    (exit)
+
+sir ki github.com se discoverdevops par jaye aur baha se minikube and kubectel ke commands cli inatance par copy karein uske check karein
+
+
+1.kubectl
+2.https://www.google.com/search?client=opera&q=kubectl+cheet+sheet&sourceid=opera&ie=UTF-8&oe=UTF-8 
+3. kubectl quick reference
+4. source <(kubectl completion bash)
+5. echo "source <(kubectl completion bash)" >> ~/.bashrc
+6.kubectl get nodes
+7.kubectl get pods -n kube-system
+8.nano pod.yaml
+9.
+10. apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod
+  labels:
+    app: nginx
+spec: 
+  containers:
+  - name: nginx-container
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+
+11. to come out it use ctrl + O    + ENTER +    CTRL+ X
+12. ls
+13. kubectl apply -f pod.yaml   (ctrl+c)
+15. kubectl get pod
+16. kubectl apply -f pod.yaml
+17. kubectl get pod one more time yuhin  kubectl get pod
+18. kubectl describe po nginx-pod
+19. kubectl delete pod nginx-pod
+20. kubectl get pod
+21. nano nginx-replicaset.yaml
+22. 
+23. ls
+24. kubectl apply -f nginx-replicaset.yaml
+25. kubectl get pod   ----2  
+26. kubectl delete pod nginx-replicaset-7hvqk
+27. kubectl get pod   
+28. 
+29. 
+30. 
+31.
+32. 
+33. 
+34. 
+35. 
+36. 
+37. 
+38. 
+39. 
+40. 
+41. 
+42. 
+43. 
+44. 
+45. 
+46. 
+47. 
+48. 
+49. 
+50. 
+51. 
+52. 
+53. 
+54. 
+55. 
+56. 
+57. 
+58. 
+59. 
+60. 
+61. 
+62.
+63.  
+64. 
+65.
