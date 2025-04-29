@@ -1,0 +1,33 @@
+Assingment Docker-1 
+
+sudo apt update
+    2  sudo apt install docker.io 
+    3  docker --version
+    4  sudo docker pull ubuntu
+    5  sudo docker images
+    6  sudo docker ps
+    7  sudo docker run -p 80:80 ubuntu
+    8  sudo docker run -it -p 80:80 ubuntu
+    9  sudo docker ps
+   10  sudo docker run -it -d -p 80:80 ubuntu
+   11  sudo docker ps
+   12  sudo docker ps -a
+   13  sudo docker ps
+   14  sudo docker exec -it 2a5872376569 bash
+   15  exit
+   16  history
+
+[+]
+
+sudo docker exec -it 2a5872376569 bash
+history
+
+    1  apt-get update
+    2  apt install apache2 -y
+    3  service apache2 status
+    4  service apache2 start
+    5  service apache2 status
+    6  exit
+    7  history
+
+
