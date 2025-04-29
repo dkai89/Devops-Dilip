@@ -1,0 +1,645 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[1]
+
+[Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-1024-aws x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Sun Mar 30 08:40:03 UTC 2025
+
+  System load:  0.0               Temperature:           -273.1 C
+  Usage of /:   40.9% of 6.71GB   Processes:             115
+  Memory usage: 6%                Users logged in:       0
+  Swap usage:   0%                IPv4 address for ens5: 172.31.19.47
+
+
+Expanded Security Maintenance for Applications is not enabled.
+
+40 updates can be applied immediately.
+16 of these updates are standard security updates.
+To see these additional updates run: apt list --upgradable
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+Last login: Sun Mar 30 08:30:25 2025 from 13.52.6.116] [1]
+
+
+
+[2]
+ubuntu@ip-172-31-19-47:~$ kubectl get pv
+NAME       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM               STORAGECLASS   VOLUMEATTRIBUTESCLASS   REASON   AGE
+nginx-pv   5Gi        RWO            Retain           Bound    default/nginx-pvc   manual         <unset>                          14h
+ubuntu@ip-172-31-19-47:~$ kubectl get pvc
+NAME        STATUS   VOLUME     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+nginx-pvc   Bound    nginx-pv   5Gi        RWO            manual         <unset>                 14h
+ubuntu@ip-172-31-19-47:~$ kubectl get deployments.apps
+NAME               READY   UP-TO-DATE   AVAILABLE   AGE
+nginx-deployment   1/1     1            1           14h
+ubuntu@ip-172-31-19-47:~$ kubectl delete deployment.apps nginx-deployment
+deployment.apps "nginx-deployment" deleted
+ubuntu@ip-172-31-19-47:~$ kubectl delete pv nginx-pv
+persistentvolume "nginx-pv" deleted
+
+^C
+ubuntu@ip-172-31-19-47:~$ kubectl -n kube-system describe configmap aws-auth
+Name:         aws-auth
+Namespace:    kube-system
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+mapRoles:
+----
+- groups:
+  - system:bootstrappers
+  - system:nodes
+  rolearn: arn:aws:iam::183631303588:role/eksctl-my-cluster-nodegroup-ng-2ee-NodeInstanceRole-pjclmw439qSL
+  username: system:node:{{EC2PrivateDNSName}}
+
+Events:  <none>
+ubuntu@ip-172-31-19-47:~$ ^[[200~
+: command not found
+ubuntu@ip-172-31-19-47:~$ curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3~
+curl: (22) The requested URL returned error: 404
+ubuntu@ip-172-31-19-47:~$ 
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+ubuntu@ip-172-31-19-47:~$ chmod 700 get_helm.sh
+ubuntu@ip-172-31-19-47:~$ ./get_helm.sh
+Downloading https://get.helm.sh/helm-v3.17.2-linux-amd64.tar.gz
+Verifying checksum... Done.
+Preparing to install helm into /usr/local/bin
+helm installed into /usr/local/bin/helm
+ubuntu@ip-172-31-19-47:~$ helm
+The Kubernetes package manager
+
+Common actions for Helm:
+
+- helm search:    search for charts
+- helm pull:      download a chart to your local directory to view
+- helm install:   upload the chart to Kubernetes
+- helm list:      list releases of charts
+
+Environment variables:
+
+| Name                               | Description                                                                                                |
+|------------------------------------|------------------------------------------------------------------------------------------------------------|
+| $HELM_CACHE_HOME                   | set an alternative location for storing cached files.                                                      |
+| $HELM_CONFIG_HOME                  | set an alternative location for storing Helm configuration.                                                |
+| $HELM_DATA_HOME                    | set an alternative location for storing Helm data.                                                         |
+| $HELM_DEBUG                        | indicate whether or not Helm is running in Debug mode                                                      |
+| $HELM_DRIVER                       | set the backend storage driver. Values are: configmap, secret, memory, sql.                                |
+| $HELM_DRIVER_SQL_CONNECTION_STRING | set the connection string the SQL storage driver should use.                                               |
+| $HELM_MAX_HISTORY                  | set the maximum number of helm release history.                                                            |
+| $HELM_NAMESPACE                    | set the namespace used for the helm operations.                                                            |
+| $HELM_NO_PLUGINS                   | disable plugins. Set HELM_NO_PLUGINS=1 to disable plugins.                                                 |
+| $HELM_PLUGINS                      | set the path to the plugins directory                                                                      |
+| $HELM_REGISTRY_CONFIG              | set the path to the registry config file.                                                                  |
+| $HELM_REPOSITORY_CACHE             | set the path to the repository cache directory                                                             |
+| $HELM_REPOSITORY_CONFIG            | set the path to the repositories file.                                                                     |
+| $KUBECONFIG                        | set an alternative Kubernetes configuration file (default "~/.kube/config")                                |
+| $HELM_KUBEAPISERVER                | set the Kubernetes API Server Endpoint for authentication                                                  |
+| $HELM_KUBECAFILE                   | set the Kubernetes certificate authority file.                                                             |
+| $HELM_KUBEASGROUPS                 | set the Groups to use for impersonation using a comma-separated list.                                      |
+| $HELM_KUBEASUSER                   | set the Username to impersonate for the operation.                                                         |
+| $HELM_KUBECONTEXT                  | set the name of the kubeconfig context.                                                                    |
+| $HELM_KUBETOKEN                    | set the Bearer KubeToken used for authentication.                                                          |
+| $HELM_KUBEINSECURE_SKIP_TLS_VERIFY | indicate if the Kubernetes API server's certificate validation should be skipped (insecure)                |
+| $HELM_KUBETLS_SERVER_NAME          | set the server name used to validate the Kubernetes API server certificate                                 |
+| $HELM_BURST_LIMIT                  | set the default burst limit in the case the server contains many CRDs (default 100, -1 to disable)         |
+| $HELM_QPS                          | set the Queries Per Second in cases where a high number of calls exceed the option for higher burst values |
+
+Helm stores cache, configuration, and data based on the following configuration order:
+
+- If a HELM_*_HOME environment variable is set, it will be used
+- Otherwise, on systems supporting the XDG base directory specification, the XDG variables will be used
+- When no other location is set a default location will be used based on the operating system
+
+By default, the default directories depend on the Operating System. The defaults are listed below:
+
+| Operating System | Cache Path                | Configuration Path             | Data Path               |
+|------------------|---------------------------|--------------------------------|-------------------------|
+| Linux            | $HOME/.cache/helm         | $HOME/.config/helm             | $HOME/.local/share/helm |
+| macOS            | $HOME/Library/Caches/helm | $HOME/Library/Preferences/helm | $HOME/Library/helm      |
+| Windows          | %TEMP%\helm               | %APPDATA%\helm                 | %APPDATA%\helm          |
+
+Usage:
+  helm [command]
+
+Available Commands:
+  completion  generate autocompletion scripts for the specified shell
+  create      create a new chart with the given name
+  dependency  manage a chart's dependencies
+  env         helm client environment information
+  get         download extended information of a named release
+  help        Help about any command
+  history     fetch release history
+  install     install a chart
+  lint        examine a chart for possible issues
+  list        list releases
+  package     package a chart directory into a chart archive
+  plugin      install, list, or uninstall Helm plugins
+  pull        download a chart from a repository and (optionally) unpack it in local directory
+  push        push a chart to remote
+  registry    login to or logout from a registry
+  repo        add, list, remove, update, and index chart repositories
+  rollback    roll back a release to a previous revision
+  search      search for a keyword in charts
+  show        show information of a chart
+  status      display the status of the named release
+  template    locally render templates
+  test        run tests for a release
+  uninstall   uninstall a release
+  upgrade     upgrade a release
+  verify      verify that a chart at the given path has been signed and is valid
+  version     print the client version information
+
+Flags:
+      --burst-limit int                 client-side default throttling limit (default 100)
+      --debug                           enable verbose output
+  -h, --help                            help for helm
+      --kube-apiserver string           the address and the port for the Kubernetes API server
+      --kube-as-group stringArray       group to impersonate for the operation, this flag can be repeated to specify multiple groups.
+      --kube-as-user string             username to impersonate for the operation
+      --kube-ca-file string             the certificate authority file for the Kubernetes API server connection
+      --kube-context string             name of the kubeconfig context to use
+      --kube-insecure-skip-tls-verify   if true, the Kubernetes API server's certificate will not be checked for validity. This will make your HTTPS connections insecure
+      --kube-tls-server-name string     server name to use for Kubernetes API server certificate validation. If it is not provided, the hostname used to contact the server is used
+      --kube-token string               bearer token used for authentication
+      --kubeconfig string               path to the kubeconfig file
+  -n, --namespace string                namespace scope for this request
+      --qps float32                     queries per second used when communicating with the Kubernetes API, not including bursting
+      --registry-config string          path to the registry config file (default "/home/ubuntu/.config/helm/registry/config.json")
+      --repository-cache string         path to the directory containing cached repository indexes (default "/home/ubuntu/.cache/helm/repository")
+      --repository-config string        path to the file containing repository names and URLs (default "/home/ubuntu/.config/helm/repositories.yaml")
+
+Use "helm [command] --help" for more information about a command.
+ubuntu@ip-172-31-19-47:~$ helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver
+"aws-ebs-csi-driver" has been added to your repositories
+ubuntu@ip-172-31-19-47:~$ helm repo update
+Hang tight while we grab the latest from your chart repositories...
+...Successfully got an update from the "aws-ebs-csi-driver" chart repository
+Update Complete. ⎈Happy Helming!⎈
+ubuntu@ip-172-31-19-47:~$ helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver \
+  --namespace kube-system \
+  --set enableVolumeScheduling=true \
+  --set enableVolumeResizing=true \
+  --set enableVolumeSnapshot=true
+Error: INSTALLATION FAILED: values don't meet the specifications of the schema(s) in the following chart(s):
+aws-ebs-csi-driver:
+- (root): Additional property enableVolumeResizing is not allowed
+- (root): Additional property enableVolumeScheduling is not allowed
+- (root): Additional property enableVolumeSnapshot is not allowed
+
+ubuntu@ip-172-31-19-47:~$ helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver --namespace kube-system
+NAME: aws-ebs-csi-driver
+LAST DEPLOYED: Sun Mar 30 09:25:18 2025
+NAMESPACE: kube-system
+STATUS: deployed
+REVISION: 1
+NOTES:
+To verify that aws-ebs-csi-driver has started, run:
+
+    kubectl get pod -n kube-system -l "app.kubernetes.io/name=aws-ebs-csi-driver,app.kubernetes.io/instance=aws-ebs-csi-driver"
+
+[Deprecation announcement] AWS Snow Family device support for the EBS CSI Driver
+
+Support for the EBS CSI Driver on [AWS Snow Family devices](https://aws.amazon.com/snowball/) is deprecated, effective immediately. No further Snow-specific bugfixes or feature requests will be merged. The existing functionality for Snow devices will be removed the 1.44 release of the EBS CSI Driver. This announcement does not affect the support of the EBS CSI Driver on other platforms, such as [Amazon EC2](https://aws.amazon.com/ec2/) or EC2 on [AWS Outposts](https://aws.amazon.com/outposts/). For any questions related to this announcement, please comment on this issue [#2365](https://github.com/kubernetes-sigs/aws-ebs-csi-driver/issues/2365) or open a new issue.
+ubuntu@ip-172-31-19-47:~$ helm list -A | grep aws-ebs-csi-driver
+aws-ebs-csi-driver      kube-system     1               2025-03-30 09:25:18.570932409 +0000 UTC deployed        aws-ebs-csi-driver-2.41.0      1.41.0     
+ubuntu@ip-172-31-19-47:~$ kubectl get pods -n kube-system | grep ebs
+ebs-csi-controller-78b54ff84b-2zf9k   5/5     Running   0          41s
+ebs-csi-controller-78b54ff84b-xczr8   5/5     Running   0          41s
+ebs-csi-node-mb7wm                    3/3     Running   0          41s
+ebs-csi-node-sqrgn                    3/3     Running   0          41s
+ubuntu@ip-172-31-19-47:~$ kubectl get csidrivers
+NAME              ATTACHREQUIRED   PODINFOONMOUNT   STORAGECAPACITY   TOKENREQUESTS   REQUIRESREPUBLISH   MODES        AGE
+ebs.csi.aws.com   true             false            false             <unset>         false               Persistent   60s
+efs.csi.aws.com   false            false            false             <unset>         false               Persistent   15h
+ubuntu@ip-172-31-19-47:~$ 
+kubectl get pods -n kube-system | grep ebs
+ebs-csi-controller-78b54ff84b-2zf9k   5/5     Running   0          87s
+ebs-csi-controller-78b54ff84b-xczr8   5/5     Running   0          87s
+ebs-csi-node-mb7wm                    3/3     Running   0          87s
+ebs-csi-node-sqrgn                    3/3     Running   0          87s
+ubuntu@ip-172-31-19-47:~$ nano storageclass.yaml
+ubuntu@ip-172-31-19-47:~$ kubectl apply -f storageclass.y
+error: the path "storageclass.y" does not exist
+ubuntu@ip-172-31-19-47:~$ ls -l storageclass.yaml
+-rw-rw-r-- 1 ubuntu ubuntu 167 Mar 30 09:27 storageclass.yaml
+ubuntu@ip-172-31-19-47:~$ cat storageclass.yaml
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: ebs-sc
+provisioner: ebs.csi.aws.com
+volumeBindingMode: WaitForFirstConsumer
+parameters:
+  type: gp3    [2]
+
+===================================================================================
+
+[3]
+
+ubuntu@ip-172-31-19-47:~$ kubectl apply -f storageclass.yaml
+storageclass.storage.k8s.io/ebs-sc created
+ubuntu@ip-172-31-19-47:~$ kubectl get storageclass
+NAME     PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+ebs-sc   ebs.csi.aws.com         Delete          WaitForFirstConsumer   false                  32s
+gp2      kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  16h
+ubuntu@ip-172-31-19-47:~$ > pvc.yaml
+ubuntu@ip-172-31-19-47:~$ nano pvc.yaml
+ubuntu@ip-172-31-19-47:~$ kubectl apply -f pvc.yaml
+persistentvolumeclaim/ebs-pvc created
+ubuntu@ip-172-31-19-47:~$ kubectl get pvc
+NAME        STATUS    VOLUME     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+ebs-pvc     Pending                                        ebs-sc         <unset>                 22s
+nginx-pvc   Bound     nginx-pv   5Gi        RWO            manual         <unset>                 15h
+ubuntu@ip-172-31-19-47:~$ > test-pod.yaml
+ubuntu@ip-172-31-19-47:~$ nano test-pod.yaml
+ubuntu@ip-172-31-19-47:~$ kubectl apply -f test-pod.yaml
+error: error validating "test-pod.yaml": error validating data: [ValidationError(Pod.spec): unknown field "accessModes" in io.k8s.api.core.v1.PodSpec, ValidationError(Pod.spec): unknown field "storageClassName" in io.k8s.api.core.v1.PodSpec, ValidationError(Pod.spec): missing required field "containers" in io.k8s.api.core.v1.PodSpec]; if you choose to ignore these errors, turn validation off with --validate=false
+ubuntu@ip-172-31-19-47:~$ ls -l test-pod.yaml
+-rw-rw-r-- 1 ubuntu ubuntu 166 Mar 30 09:35 test-pod.yaml
+ubuntu@ip-172-31-19-47:~$ cat test-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: test-pod
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ebs-sc
+ubuntu@ip-172-31-19-47:~$ kubectl apply -f test-pod.yaml
+error: error validating "test-pod.yaml": error validating data: [ValidationError(Pod.spec): unknown field "accessModes" in io.k8s.api.core.v1.PodSpec, ValidationError(Pod.spec): unknown field "storageClassName" in io.k8s.api.core.v1.PodSpec, ValidationError(Pod.spec): missing required field "containers" in io.k8s.api.core.v1.PodSpec]; if you choose to ignore these errors, turn validation off with --validate=false
+ubuntu@ip-172-31-19-47:~$ > test-pod.yaml
+nano test-pod.yaml
+ubuntu@ip-172-31-19-47:~$ kubectl apply -f pvc.yaml
+persistentvolumeclaim/ebs-pvc unchanged
+ubuntu@ip-172-31-19-47:~$ kubectl apply -f test-pod.yaml
+persistentvolumeclaim/ebs-pvc unchanged
+ubuntu@ip-172-31-19-47:~$ kubectl get pods
+No resources found in default namespace.
+ubuntu@ip-172-31-19-47:~$ kubectl describe pod test-pod
+Error from server (NotFound): pods "test-pod" not found
+ubuntu@ip-172-31-19-47:~$ cat test-pod.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: ebs-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ebs-sc
+ubuntu@ip-172-31-19-47:~$ kubectl get pvc ebs-pvc
+NAME      STATUS    VOLUME   CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+ebs-pvc   Pending                                      ebs-sc         <unset>                 11m
+ubuntu@ip-172-31-19-47:~$ nano test-pod.yaml
+ubuntu@ip-172-31-19-47:~$ kubectl apply -f test-pod.yaml
+pod/test-pod created            [3]
+
+==========================================================================================================
+
+[4]
+
+ubuntu@ip-172-31-19-47:~$ kubectl get pods
+NAME       READY   STATUS    RESTARTS   AGE
+test-pod   1/1     Running   0          16s
+ubuntu@ip-172-31-19-47:~$ kubectl get storageclass
+NAME     PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+ebs-sc   ebs.csi.aws.com         Delete          WaitForFirstConsumer   false                  17m
+gp2      kubernetes.io/aws-ebs   Delete          WaitForFirstConsumer   false                  16h
+ubuntu@ip-172-31-19-47:~$ kubectl describe pvc ebs-pvc
+kubectl describe pod test-pod
+Name:          ebs-pvc
+Namespace:     default
+StorageClass:  ebs-sc
+Status:        Bound
+Volume:        pvc-319c996c-4ce9-4852-a2c1-b47b412dc2c2
+Labels:        <none>
+Annotations:   pv.kubernetes.io/bind-completed: yes
+               pv.kubernetes.io/bound-by-controller: yes
+               volume.beta.kubernetes.io/storage-provisioner: ebs.csi.aws.com
+               volume.kubernetes.io/selected-node: ip-192-168-20-201.us-west-1.compute.internal
+               volume.kubernetes.io/storage-provisioner: ebs.csi.aws.com
+Finalizers:    [kubernetes.io/pvc-protection]
+Capacity:      5Gi
+Access Modes:  RWO
+VolumeMode:    Filesystem
+Used By:       test-pod
+Events:
+  Type    Reason                 Age                   From                                                                                      Message
+  ----    ------                 ----                  ----                                                                                      -------
+  Normal  WaitForFirstConsumer   5m51s (x42 over 16m)  persistentvolume-controller                                                               waiting for first consumer to be created before binding
+  Normal  Provisioning           2m5s                  ebs.csi.aws.com_ebs-csi-controller-78b54ff84b-2zf9k_68bf3a1f-bcb7-40a6-8f7f-c7d5bc946112  External provisioner is provisioning volume for claim "default/ebs-pvc"
+  Normal  ProvisioningSucceeded  2m2s                  ebs.csi.aws.com_ebs-csi-controller-78b54ff84b-2zf9k_68bf3a1f-bcb7-40a6-8f7f-c7d5bc946112  Successfully provisioned volume pvc-319c996c-4ce9-4852-a2c1-b47b412dc2c2
+Name:         test-pod
+Namespace:    default
+Priority:     0
+Node:         ip-192-168-20-201.us-west-1.compute.internal/192.168.20.201
+Start Time:   Sun, 30 Mar 2025 09:47:13 +0000
+Labels:       <none>
+Annotations:  <none>
+Status:       Running
+IP:           192.168.31.14
+IPs:
+  IP:  192.168.31.14
+Containers:
+  my-container:
+    Container ID:   containerd://7094f6909a72b0f82e89ea9ad7d0adb90f5a555199481b405a083fd9ef4d9eab
+    Image:          nginx
+    Image ID:       docker.io/library/nginx@sha256:124b44bfc9ccd1f3cedf4b592d4d1e8bddb78b51ec2ed5056c52d3692baebc19
+    Port:           <none>
+    Host Port:      <none>
+    State:          Running
+      Started:      Sun, 30 Mar 2025 09:47:21 +0000
+    Ready:          True
+    Restart Count:  0
+    Environment:    <none>
+    Mounts:
+      /data from ebs-volume (rw)
+      /var/run/secrets/kubernetes.io/serviceaccount from kube-api-access-c5kxt (ro)
+Conditions:
+  Type                        Status
+  PodReadyToStartContainers   True 
+  Initialized                 True 
+  Ready                       True 
+  ContainersReady             True 
+  PodScheduled                True 
+Volumes:
+  ebs-volume:
+    Type:       PersistentVolumeClaim (a reference to a PersistentVolumeClaim in the same namespace)
+    ClaimName:  ebs-pvc
+    ReadOnly:   false
+  kube-api-access-c5kxt:
+    Type:                    Projected (a volume that contains injected data from multiple sources)
+    TokenExpirationSeconds:  3607
+    ConfigMapName:           kube-root-ca.crt
+    ConfigMapOptional:       <nil>
+    DownwardAPI:             true
+QoS Class:                   BestEffort
+Node-Selectors:              <none>
+Tolerations:                 node.kubernetes.io/not-ready:NoExecute op=Exists for 300s
+                             node.kubernetes.io/unreachable:NoExecute op=Exists for 300s
+Events:
+  Type    Reason                  Age   From                     Message
+  ----    ------                  ----  ----                     -------
+  Normal  Scheduled               2m3s  default-scheduler        Successfully assigned default/test-pod to ip-192-168-20-201.us-west-1.compute.internal
+  Normal  SuccessfulAttachVolume  2m    attachdetach-controller  AttachVolume.Attach succeeded for volume "pvc-319c996c-4ce9-4852-a2c1-b47b412dc2c2"
+  Normal  Pulling                 119s  kubelet                  Pulling image "nginx"
+  Normal  Pulled                  115s  kubelet                  Successfully pulled image "nginx" in 4.715s (4.715s including waiting). Image size: 72180980 bytes.
+  Normal  Created                 115s  kubelet                  Created container: my-container
+  Normal  Started                 115s  kubelet                  Started container my-container
+ubuntu@ip-172-31-19-47:~$ kubectl get pvc
+NAME        STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+ebs-pvc     Bound    pvc-319c996c-4ce9-4852-a2c1-b47b412dc2c2   5Gi        RWO            ebs-sc         <unset>                 18m
+nginx-pvc   Bound    nginx-pv                                   5Gi        RWO            manual         <unset>                 16h
+ubuntu@ip-172-31-19-47:~$ >configmap.yaml
+nano configmap.yaml
+ubuntu@ip-172-31-19-47:~$ kubectl apply -f configmap.yaml
+configmap/nginx-config created
+ubuntu@ip-172-31-19-47:~$ kubectl get cm
+NAME               DATA   AGE
+kube-root-ca.crt   1      16h
+nginx-config       1      30s
+ubuntu@ip-172-31-19-47:~$ kubectl describe cm nginx-config
+Name:         nginx-config
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+index.html:
+----
+<html>
+<head>title>Welcome to NGINX</title></head>
+<body>
+  <h1>Hello from ConfigMap!</h1>
+</body>
+</html>
+
+Events:  <none>
+ubuntu@ip-172-31-19-47:~$ > nginx-deployment-configmap.yaml
+nano nginx-deployment-configmap.yaml
+ubuntu@ip-172-31-19-47:~$ kubectl apply -f nginx-deployment-configmap.yaml
+configmap/nginx-config configured
+ubuntu@ip-172-31-19-47:~$ kubectl get pods
+NAME       READY   STATUS    RESTARTS   AGE
+test-pod   1/1     Running   0          13m
+ubuntu@ip-172-31-19-47:~$ >nginx-service.yaml
+nano nginx-service.yaml
+ubuntu@ip-172-31-19-47:~$ kubectl apply -f nginx-service.yaml
+deployment.apps/nginx-deployment created
+ubuntu@ip-172-31-19-47:~$ kubectl get svc
+NAME         TYPE        CLUSTER-IP   EXTERNAL-IP   PORT(S)   AGE
+kubernetes   ClusterIP   10.100.0.1   <none>        443/TCP   16h
+ubuntu@ip-172-31-19-47:~$ kubectl get pod -o wide
+NAME                                READY   STATUS    RESTARTS   AGE   IP               NODE                                           NOMINATED NODE   READINESS GATES
+nginx-deployment-5c48c7fd4c-8wfqn   1/1     Running   0          45s   192.168.14.118   ip-192-168-20-201.us-west-1.compute.internal   <none>           <none>
+test-pod                            1/1     Running   0          18m   192.168.31.14    ip-192-168-20-201.us-west-1.compute.internal   <none>           <none>
+ubuntu@ip-172-31-19-47:~$ nano secret.yaml
+ubuntu@ip-172-31-19-47:~$ kubectl apply -f secret.yaml
+secret/app-secret created
+ubuntu@ip-172-31-19-47:~$ kubectl get secret
+NAME         TYPE     DATA   AGE
+app-secret   Opaque   2      28s
+ubuntu@ip-172-31-19-47:~$ kubectl describe secret app-secret
+Name:         app-secret
+Namespace:    default
+Labels:       <none>
+Annotations:  <none>
+
+Type:  Opaque
+
+Data
+====
+password:  8 bytes
+username:  5 bytes
+ubuntu@ip-172-31-19-47:~$ nano nginx-deployment-secret.yaml
+ubuntu@ip-172-31-19-47:~$ kubectl apply -f nginx-deployment-secret.yaml
+deployment.apps/nginx-deployment configured
+ubuntu@ip-172-31-19-47:~$ kubectl get pods
+NAME                              READY   STATUS    RESTARTS   AGE
+nginx-deployment-6cb77bc6-qzmqh   1/1     Running   0          32s
+test-pod                          1/1     Running   0          24m
+ubuntu@ip-172-31-19-47:~$ kubectl exec -it nginx-deployment-6cb77bc6-qzmqh -- /bin/sh
+# exit
+ubuntu@ip-172-31-19-47:~$ 
+
+
+=============================================================================================
+                     --HISTORY---
+    1  PS1="K8S $ "
+    2  sudo apt update
+    3  aws --version
+    4  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    5  unzip awscliv2.zip
+    6  sudo apt update && sudo apt install -y unzip
+    7  sudo unzip awscliv2.zip
+    8  aws --version
+    9  sudo yum install -y unzip
+   10  brew install unzip
+   11  sudo apt update
+   12  sudo apt install -y awscli
+   13  aws --version
+   14  aws configure
+   15  PS1="EKS $ "
+   16  aws --version
+   17  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+   18  unzip awscliv2.zip
+   19  PS1="EKS $ "
+   20  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+   21  ls
+   22  unzip awscliv2.zip
+   23  sudo ./aws/install
+   24  aws --version
+   25  curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+   26  unzip awscliv2.zip
+   27  aws --version
+   28  curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.21.2/2021-07-05/bin/linux/amd64/kubectl
+   29  chmod +x ./kubectl
+   30  sudo mv ./kubectl /usr/local/bin
+   31  kubectl version --short --client
+   32  curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+   33  sudo mv /tmp/eksctl /usr/local/bin
+   34  eksctl version
+   35  cd /tmp
+   36  ls -lart
+   37  sudo mv /tmp/eksctl /usr/local/bin
+   38  eksctl version 
+   39  curl -s --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_Linux_amd64.tar.gz" | tar xz -C /tmp
+   40  sudo mv /tmp/eksctl /usr/local/bin
+   41  eksctl version
+   42  eksctl create cluster --name my-cluster    --region us-west-1    --node-type t3.medium
+   43  kubectl get nodes
+   44  nano pv.yaml
+   45  kubectl apply -f pv.yaml
+   46  kubectl get pv
+   47  nano pvc.yaml
+   48  kubectl apply -f pvc.yaml 
+   49  kubectl get pv
+   50  > nginx.yaml
+   51  nano nginx.yaml
+   52  kubectl apply -f nginx.yaml
+   53  kubectl get pod
+   54  kubectl exec -it nginx-deployment-5c794987d4-hbmrk -- /bin/bash
+   55  sudo apt update
+   56  ls
+   57  ls -lrt
+   58  cd /usr/share//nginx/
+   59  ls -l /usr/share/ | grep nginx
+   60  nginx -v
+   61  sudo apt install nginx -y
+   62  nginx -v
+   63  sudo systemctl start nginx
+   64  sudo systemctl enable nginx  # System restart hone ke baad bhi NGINX chalu rahega
+   65  systemctl status nginx
+   66  cd /usr/share//nginx/
+   67  ls
+   68  cd html/
+   69  ls
+   70  pwd
+   71  exit
+   72  kubectl get pv
+   73  kubectl get pvc
+   74  kubectl get deployments.apps
+   75  kubectl delete deployment.apps nginx-deployment
+   76  kubectl delete pv nginx-pv
+   77  kubectl -n kube-system describe configmap aws-auth
+   78  
+   79  curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3~
+   80  curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+   81  chmod 700 get_helm.sh
+   82  ./get_helm.sh
+   83  helm
+   84  helm repo add aws-ebs-csi-driver https://kubernetes-sigs.github.io/aws-ebs-csi-driver
+   85  helm repo update
+   86  helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver   --namespace kube-system   --set enableVolumeScheduling=true   --set enableVolumeResizing=true   --set enableVolumeSnapshot=true
+   87  helm install aws-ebs-csi-driver aws-ebs-csi-driver/aws-ebs-csi-driver --namespace kube-system
+   88  helm list -A | grep aws-ebs-csi-driver
+   89  kubectl get pods -n kube-system | grep ebs
+   90  kubectl get csidrivers
+   91  kubectl get pods -n kube-system | grep ebs
+   92  nano storageclass.yaml
+   93  kubectl apply -f storageclass.y
+   94  ls -l storageclass.yaml
+   95  cat storageclass.yaml
+   96  kubectl apply -f storageclass.yaml
+   97  kubectl get storageclass
+   98  > pvc.yaml
+   99  nano pvc.yaml
+  100  kubectl apply -f pvc.yaml
+  101  kubectl get pvc
+  102  > test-pod.yaml
+  103  nano test-pod.yaml
+  104  kubectl apply -f test-pod.yaml
+  105  ls -l test-pod.yaml
+  106  cat test-pod.yaml
+  107  kubectl apply -f test-pod.yaml
+  108  > test-pod.yaml
+  109  nano test-pod.yaml
+  110  kubectl apply -f pvc.yaml
+  111  kubectl apply -f test-pod.yaml
+  112  kubectl get pods
+  113  kubectl describe pod test-pod
+  114  cat test-pod.yaml
+  115  kubectl get pvc ebs-pvc
+  116  nano test-pod.yaml
+  117  kubectl apply -f test-pod.yaml
+  118  kubectl get pods
+  119  kubectl get storageclass
+  120  kubectl describe pvc ebs-pvc
+  121  kubectl describe pod test-pod
+  122  kubectl get pvc
+  123  >configmap.yaml
+  124  nano configmap.yaml
+  125  kubectl apply -f configmap.yaml
+  126  kubectl get cm
+  127  kubectl describe cm nginx-config
+  128  > nginx-deployment-configmap.yaml
+  129  nano nginx-deployment-configmap.yaml
+  130  kubectl apply -f nginx-deployment-configmap.yaml
+  131  kubectl get pods
+  132  >nginx-service.yaml
+  133  nano nginx-service.yaml
+  134  kubectl apply -f nginx-service.yaml
+  135  kubectl get svc
+  136  kubectl get pod -o wide
+  137  nano secret.yaml
+  138  kubectl apply -f secret.yaml
+  139  kubectl get secret
+  140  kubectl describe secret app-secret
+  141  nano nginx-deployment-secret.yaml
+  142  kubectl apply -f nginx-deployment-secret.yaml
+  143  kubectl get pods
+  144  kubectl exec -it nginx-deployment-6cb77bc6-qzmqh -- /bin/sh
+  145  history
