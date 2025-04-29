@@ -1,0 +1,124 @@
+Assingment-1 to 5 (25-02-2025)
+
+   84  sudo apt-get update
+   85  sudo docker login
+   86  sudo docker images
+   87  sudo docker tag new-task dilipdevops1982/new-task
+   88  sudo docker images
+   89  sudo docker push dilipdevops1982/new-task
+
+
+Assingment-1
+
+sudo apt update
+    2  sudo apt install docker.io 
+    3  docker --version
+    4  sudo docker pull ubuntu
+    5  sudo docker images
+    6  sudo docker ps
+    7  sudo docker run -p 80:80 ubuntu
+    8  sudo docker run -it -p 80:80 ubuntu
+    9  sudo docker ps
+   10  sudo docker run -it -d -p 80:80 ubuntu
+   11  sudo docker ps
+   12  sudo docker ps -a
+   13  sudo docker ps
+   14  sudo docker exec -it 2a5872376569 bash
+   15  history
+
+[+]
+
+apt-get update
+    2  apt install apache2 -y
+    3  service apache2 status
+    4  service apache2 start
+    5  service apache2 status
+    6  exit
+    7  history
+
+Assingment-2
+
+sudo docker ps
+   20  sudo docker commit 2a5872376569 new-task
+   21  sudo docker images
+   22  sudo docker run -itd -p 81:80 new-task
+   23  sudo docker exec -it b190b3d6fe74aa8d53f56ed2d2aa8e0a11ae590cc35dab0b4e6331fce457adfc bash
+   24  history [ec2 intance yet Docker-1]
+
+
+Assingment-3
+
+On Docker-1 [ec2 instance]
+
+sudo docker login
+   27  sudo docker images
+   28  sudo docker tag new-task aadi0410/new-task
+   29  sudo docker images
+   30  sudo docker push aadi0410/new-task 
+   31  history
+
+On Docker-2 [ec2 instance]
+
+sudo apt update
+    2  sudo apt install docker.io -y
+    3  sudo docker pull aadi0410/new-task
+    4  sudo docker images
+    5  sudo docker run -itd -p 80:80 aadi0410/new-task
+    6  sudo docker ps
+    7  sudo docker exec -it 73cddf9d89cd bash
+    8  history
+
+
+Assingment-4
+
+On Docker-1 (whole assingment)
+
+sudo nano Dockerfile
+   37  sudo docker build . -t doc
+   38  sudo docker images
+   39  sudo docker run -itd -p 99:80 doc
+   40  history
+
+nano dockerfile
+
+FROM  ubuntu
+RUN  apt-get update
+RUN apt install apache2 -y
+ENTRYPOINT apachectl -D FOREGROUND
+
+sudo cat Dockerfile
+
+
+
+
+
+Assingment-5 [Docker-1 ec2 instance]
+
+FROM ubuntu
+RUN apt-get update
+RUN apt install apache2 -y
+ADD index.html /var/www/html/
+ENTRYPOINT apachectl -D FOREGROUND
+
+
+
+sudo cat Dockerfile 
+   42  sudo nano index.html
+   43  sudo nano Dockerfile 
+   44  sudo docker build . -t work-5
+   45  sudo docker run -itd -p 101:80 work-5
+   46  curl 3.145.177.148:101
+   47  sudo docker run -itd -p 120:80 work-5
+   48  sudo nano index.html 
+   49  sudo docker build -t t1 .
+   50  sudo docker run -itd -p 90:80 t1
+   51  sudo cat Dockerfile 
+   52  history
+
+
+
+
+
+extra work was done for practical purpose
+http://13.61.150.108:8080/calculator.html
+
